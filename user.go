@@ -35,12 +35,15 @@ func (u *User) insert() error {
 
 // AuthUser takes a username and a password and return a user if login succeeded, otherwhise an error
 func AuthUser(username string, password string) (User, error) {
+	fmt.Printf("%s, %s", username, password)
 	rows, err := db.Query("SELECT ID, NAME, EMAIL, PASSWORD from users WHERE EMAIL=?;", username)
 	if err != nil {
 		return User{}, fmt.Errorf("Username and/or password do not match")
 	}
 	u := User{}
+	rows.Next()
 	rows.Scan(&u.ID, &u.Name, &u.User, &u.Password)
+	fmt.Printf("%v, %s", u, password)
 	err = bcrypt.CompareHashAndPassword(u.Password, []byte(password))
 	if err != nil {
 		return User{}, fmt.Errorf("Username and/or password do not match")
