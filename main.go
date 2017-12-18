@@ -83,11 +83,11 @@ func home(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 
 func userTestInsert(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	u := user{
+	u := &user{
 		ID:       0,
 		Name:     "Test Name",
 		User:     "test@test.te",
-		Password: "encryptedpassword,indeed",
+		Password: []byte("encryptedpassword,indeed"),
 	}
 	err := u.insert()
 	if err != nil {
