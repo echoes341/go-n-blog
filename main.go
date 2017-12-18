@@ -83,11 +83,11 @@ func home(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 
 func userTestInsert(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	u := &user{
+	u := &User{
 		ID:       0,
 		Name:     "Test Name",
-		User:     "test@test.te",
-		Password: []byte("encryptedpassword,indeed"),
+		User:     "aaa@sd.it",
+		Password: []byte("pass"),
 	}
 	err := u.insert()
 	if err != nil {
@@ -103,9 +103,23 @@ func printUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Select users error: %s", err)
 	}
-	var u user
+	var u User
 	for rows.Next() {
 		rows.Scan(&u.ID, &u.Name, &u.User, &u.Password)
 		fmt.Fprintf(w, "ID: %d   NAME: %s   USERNAME: %s   password: %s\n", u.ID, u.Name, u.User, u.Password)
 	}
+}
+
+func login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	user := r.FormValue("user")
+	psw := r.FormValue("password")
+	if user == "" || psw == "" {
+		return
+	}
+	u, err := AuthUser(user, psw)
+	if err != nil {
+		fmt.Fprintln(w, err)
+		return
+	}
+	fmt.Fprintf(w, "Welcome %s, I'll remember you...someday\n", u.Name)
 }

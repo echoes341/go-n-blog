@@ -6,14 +6,15 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type user struct {
+// User is the struct containing the user informations
+type User struct {
 	ID int
 	Name,
 	User string
 	Password []byte
 }
 
-func (u *user) insert() error {
+func (u *User) insert() error {
 	// ID set to NULL so db autoincrements it
 
 	// !!! DOES NOT WORK
@@ -32,24 +33,22 @@ func (u *user) insert() error {
 	return nil
 }
 
-	return nil
-}
-
-// Login takes a username and a password and return a user if login succeeded, otherwhise an error
-func Login(username string, password string) (user, error) {
-	u := user{}
-	rows, err := db.Query("SELECT * from users WHERE NAME=?;", username)
+// AuthUser takes a username and a password and return a user if login succeeded, otherwhise an error
+func AuthUser(username string, password string) (User, error) {
+	rows, err := db.Query("SELECT ID, NAME, EMAIL, PASSWORD from users WHERE EMAIL=?;", username)
 	if err != nil {
-		return u, err
+		return User{}, fmt.Errorf("Username and/or password do not match")
 	}
-
+	u := User{}
+	rows.Scan(&u.ID, &u.Name, &u.User, &u.Password)
+	err = bcrypt.CompareHashAndPassword(u.Password, []byte(password))
+	if err != nil {
+		return User{}, fmt.Errorf("Username and/or password do not match")
+	}
+	return u, nil
 }
 
-func (u user) IsValidPassword(password string) bool {
-	return bcrypt.CompareHashAndPassword(u.Password, []byte(password)) == nil
-}
-
-func encryptPassword(u *user) error {
+func encryptPassword(u *User) error {
 	var e error
 	u.Password, e = bcrypt.GenerateFromPassword(u.Password, bcrypt.DefaultCost)
 	return e
