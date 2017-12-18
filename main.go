@@ -98,7 +98,7 @@ func userTestInsert(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 }
 
 func printUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	rows, err := db.Query("SELECT * FROM users WHERE EMAIL=\"aaa@sd.it\";")
+	rows, err := db.Query("SELECT * FROM users;")
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Select users error: %s", err)
