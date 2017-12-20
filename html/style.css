@@ -39,29 +39,32 @@ h6 {
       "main main main side"
       "ft ft ft ft";
   }
+  .sidebar {
+    border-left: 1px solid #dddddd;
+  }
 }
 
 .container > * {
   padding: 1em;
 }
 
-header {
+.border-bottom{
+  border-bottom: 1px solid #dddddd;
+}
 
+header {
   grid-area: hd;
 }
 
 .article-container {
-
   grid-area: main;
 }
 
 .sidebar {
-
   grid-area: side;
 }
 
 footer {
-
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(10em, 1fr));
   grid-area: ft;
