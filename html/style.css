@@ -22,17 +22,18 @@ h6 {
 
 .container {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: 1fr;
   grid-template-rows: minmax(10vh, auto) minmax(80vh, auto) minmax(10vh, auto);
   grid-template-areas:
-    "hd hd hd hd"
-    "main main main main"
-    "side side side side"
-    "ft ft ft ft";
+    "hd"
+    "main"
+    "side"
+    "ft";
 }
 
 @media (min-width: 720px) {
   .container {
+    grid-template-columns: repeat(4, 1fr);
     grid-template-areas:
       "hd hd hd hd"
       "main main main side"
