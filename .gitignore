@@ -5,4 +5,4 @@ vscode/*
 *.exe
 
 #angular
-node_modules/*
+*/node_modules/*
