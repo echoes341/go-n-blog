@@ -1,6 +1,6 @@
 import { AppPage } from './app.po';
 
-describe('go-n-blog App', () => {
+describe('gnb-front App', () => {
   let page: AppPage;
 
   beforeEach(() => {
