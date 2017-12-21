@@ -3,3 +3,6 @@ vscode/*
 
 #executables 
 *.exe
+
+#angular
+node_modules/*
