@@ -1,0 +1,11 @@
+header {
+  padding-left: 1em;
+  padding-right: 1em;
+  display: flex;
+  height: 100%;
+  align-items: center;
+}
+h1 {
+  margin: 0;
+  padding: 0;
+}
