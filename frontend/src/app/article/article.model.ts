@@ -4,5 +4,6 @@ export class Article {
     public title: string,
     public author: string,
     public text: string,
-    public date: Date) { }
+    public date: Date // care: js months start from 0! -> 9 is october => 10
+  ) { }
 }
