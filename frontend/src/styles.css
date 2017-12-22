@@ -22,3 +22,8 @@ h6 {
   font-family: "Montserrat", serif;
   letter-spacing: 0.1em;
 }
+
+hr {
+  border: none;
+  border-bottom: 1px solid #ddd;
+}

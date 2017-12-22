@@ -8,6 +8,8 @@ import { ArticleListComponent } from './article/article-list/article-list.compon
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { FooterComponent } from './footer/footer.component';
 import { ArticleItemComponent } from './article/article-list/article-item/article-item.component';
+import { UserinfoComponent } from './sidebar/userinfo/userinfo.component';
+import { ArtbydateRecapComponent } from './sidebar/artbydate-recap/artbydate-recap.component';
 
 
 @NgModule({
@@ -17,7 +19,9 @@ import { ArticleItemComponent } from './article/article-list/article-item/articl
     ArticleListComponent,
     SidebarComponent,
     FooterComponent,
-    ArticleItemComponent
+    ArticleItemComponent,
+    UserinfoComponent,
+    ArtbydateRecapComponent
   ],
   imports: [
     BrowserModule
