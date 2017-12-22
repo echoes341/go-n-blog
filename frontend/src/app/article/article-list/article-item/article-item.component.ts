@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Article } from '../../article.model';
+import { CommentService } from '../../../comments/comment.service';
 
 
 @Component({
@@ -10,9 +11,11 @@ import { Article } from '../../article.model';
 export class ArticleItemComponent implements OnInit {
 
   @Input() article: Article;
-  constructor() { }
+  cCount: number;
+  constructor(private commentServ: CommentService ) { }
 
   ngOnInit() {
+    this.cCount = this.commentServ.getCountCommentByArtID(this.article.id);
   }
 
 }
