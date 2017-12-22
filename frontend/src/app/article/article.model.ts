@@ -7,3 +7,7 @@ export class Article {
     public date: Date // care: js months start from 0! -> 9 is october => 10
   ) { }
 }
+
+export class ArticleRecap {
+  constructor(public year: number, public month: number, public c: number) { }
+}

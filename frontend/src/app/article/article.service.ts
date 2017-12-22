@@ -1,4 +1,4 @@
-import { Article } from './article.model';
+import { Article, ArticleRecap } from './article.model';
 
 export class ArticleService {
   public articles = [
@@ -40,6 +40,18 @@ export class ArticleService {
     });
     this.sortArticles(result);
     return result.slice(0, x);
+  }
+
+  public getArticlesRecap(): ArticleRecap[] {
+    /*
+      get from API-> TODO
+    */
+    return [
+      new ArticleRecap(2017, 11, 4),
+      new ArticleRecap(2017, 9, 2),
+      new ArticleRecap(2017, 0, 1),
+    ];
+
   }
   /* sort articles by date */
   public sort() {

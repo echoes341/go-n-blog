@@ -1,3 +1,8 @@
-<p>
-  artbydate-recap works!
-</p>
+<p>Archive:</p>
+<ul>
+  <li *ngFor="let month of list; let year = index;"> {{year}}
+    <ul>
+      <li *ngFor="let c of month; let m = index;">{{m}} ({{c}})</li>
+    </ul>
+  </li>
+</ul>
