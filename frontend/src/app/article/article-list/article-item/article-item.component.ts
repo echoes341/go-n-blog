@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Article } from '../shared/article.model';
+import { Article } from '../../shared/article.model';
 
 
 @Component({

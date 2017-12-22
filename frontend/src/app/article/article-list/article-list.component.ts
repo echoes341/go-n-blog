@@ -13,7 +13,7 @@ export class ArticleListComponent implements OnInit {
       'Titolo',
       'echoes',
       'This is an article test, I hope it works.',
-      new Date('2017-12-22')
+      new Date(2017, 12, 22, 17, 23)
     ),
     new Article(
       2,
@@ -24,7 +24,7 @@ export class ArticleListComponent implements OnInit {
       reprehenderit porro culpa! Reprehenderit dolorem esse ullam, saepe atque quia
       distinctio recusandae maxime possimus soluta!
       Aliquid exercitationem veritatis, dolores culpa ratione sint expedita. `,
-      new Date('2017-12-22')
+      new Date(2017, 12, 22, 17, 21)
     )
   ];
   constructor() {}
