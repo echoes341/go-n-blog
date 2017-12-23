@@ -16,10 +16,15 @@ h3 {
   color: hsl(220, 45%, 25%);
   border-radius: 0.2em;
   transition: background-color 80ms ease-in-out;
+  cursor: pointer;
 }
 
 .toolbar > button:hover {
   background-color: hsl(220, 100%, 80%);
+}
+
+.liked {
+  background-color: hsl(220, 100%, 85%) !important;
 }
 
 @media (min-width: 756px) {

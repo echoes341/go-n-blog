@@ -5,8 +5,8 @@
     {{article.text}}
   </p>
   <div class="toolbar">
-    <button (click)="toggleLike()">
-        <ng-container *ngIf="liked; else like">Unlike</ng-container>
+    <button (click)="toggleLike()" [ngClass]="{'liked': isLiked}">
+        <ng-container *ngIf="isLiked; else like">Unlike</ng-container>
         <ng-template #like>Like</ng-template>
       ({{likeNum}})
     </button>

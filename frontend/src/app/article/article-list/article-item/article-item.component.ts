@@ -18,7 +18,7 @@ export class ArticleItemComponent implements OnInit {
   cCount: number;
   dateFormat: string;
   likeNum: number;
-  liked: boolean;
+  isLiked: boolean;
 
   constructor(private commentServ: CommentService, private likeServ: LikeService ) { }
 
@@ -32,7 +32,7 @@ export class ArticleItemComponent implements OnInit {
     this.dateFormat = dF;
 
     this.likeNum = this.getLikeNum();
-    this.liked = false;
+    this.isLiked = false;
 
   }
 
@@ -42,8 +42,8 @@ export class ArticleItemComponent implements OnInit {
   }
 
   public toggleLike() {
-    this.liked ? this.likeNum-- : this.likeNum++;
-    this.liked = !this.liked;
+    this.isLiked ? this.likeNum-- : this.likeNum++;
+    this.isLiked = !this.isLiked;
   }
 
 }
