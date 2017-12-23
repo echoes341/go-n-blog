@@ -8,6 +8,20 @@ h3 {
   margin: 0;
 }
 
+.toolbar > button {
+  border: 1px solid hsl(220, 100%, 85%);
+  background-color: hsl(220, 100%, 95%);
+  padding: 0.5em 1em;
+  margin-right: 1em;
+  color: hsl(220, 45%, 25%);
+  border-radius: 0.2em;
+  transition: background-color 80ms ease-in-out;
+}
+
+.toolbar > button:hover {
+  background-color: hsl(220, 100%, 80%);
+}
+
 @media (min-width: 756px) {
   article {
     margin: 1em;

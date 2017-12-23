@@ -1,7 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Article } from '../../article.model';
-import { CommentService } from '../../../comments/comment.service';
 
+import { Article } from '../../article.model';
+
+
+
+import { CommentService } from '../../../comments/comment.service';
+import { LikeService } from '../../like.service';
 
 @Component({
   selector: 'app-article-item',
@@ -13,7 +17,10 @@ export class ArticleItemComponent implements OnInit {
   @Input() article: Article;
   cCount: number;
   dateFormat: string;
-  constructor(private commentServ: CommentService ) { }
+  likeNum: number;
+  liked: boolean;
+
+  constructor(private commentServ: CommentService, private likeServ: LikeService ) { }
 
   ngOnInit() {
     this.cCount = this.commentServ.getCountCommentByArtID(this.article.id);
@@ -24,6 +31,19 @@ export class ArticleItemComponent implements OnInit {
     dF += day + '-' + month + '-' + d.getFullYear();
     this.dateFormat = dF;
 
+    this.likeNum = this.getLikeNum();
+    this.liked = false;
+
+  }
+
+  public getLikeNum(): number {
+    const likes = this.likeServ.getLikeByArtID(this.article.id);
+    return likes.length;
+  }
+
+  public toggleLike() {
+    this.liked ? this.likeNum-- : this.likeNum++;
+    this.liked = !this.liked;
   }
 
 }

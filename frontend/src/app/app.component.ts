@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommentService } from './comments/comment.service';
 import { ArticleService } from './article/article.service';
+import { LikeService } from './article/like.service';
 
 @Component({
   selector: 'app-root',

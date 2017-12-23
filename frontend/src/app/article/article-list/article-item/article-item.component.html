@@ -4,5 +4,12 @@
   <p>
     {{article.text}}
   </p>
-  <div class="toolbar"><a href="#">Like</a> {{cCount}} Comment </div>
+  <div class="toolbar">
+    <button (click)="toggleLike()">
+        <ng-container *ngIf="liked; else like">Unlike</ng-container>
+        <ng-template #like>Like</ng-template>
+      ({{likeNum}})
+    </button>
+    <button>Comments: {{cCount}}</button>
+   </div>
 </article>
