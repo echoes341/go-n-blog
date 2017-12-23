@@ -11,6 +11,8 @@ export class ArtbydateRecapComponent implements OnInit {
 
 
   list = {};
+  objectKeys= Object.keys;
+
   constructor(private aService: ArticleService) { }
 
   ngOnInit() {
@@ -18,9 +20,9 @@ export class ArtbydateRecapComponent implements OnInit {
     this.buildList(artRecap);
   }
 
-  private getMonthName(n: number): string {
+  public getMonthName(n: number): string {
     const monthName = [
-      'Jenuary',   'February', 'March',    'April',
+      'January',   'February', 'March',    'April',
       'May',       'June',     'July',     'August',
       'September', 'October',  'November', 'December'
     ];
@@ -30,8 +32,13 @@ export class ArtbydateRecapComponent implements OnInit {
   private buildList(aR: ArticleRecap[]) {
 
     aR.forEach(el => {
-      // TODO
+      if (this.list[el.year] === undefined) {
+        this.list[el.year] = {};
+      }
+      this.list[el.year][el.month] = el.c;
+
     });
+    console.log(this.list);
   }
 
 }

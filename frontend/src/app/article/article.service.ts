@@ -50,6 +50,7 @@ export class ArticleService {
       new ArticleRecap(2017, 11, 4),
       new ArticleRecap(2017, 9, 2),
       new ArticleRecap(2017, 0, 1),
+      new ArticleRecap(2018, 11, 4),
     ];
 
   }

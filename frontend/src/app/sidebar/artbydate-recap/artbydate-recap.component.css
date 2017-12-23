@@ -1,0 +1,22 @@
+.year {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.month {
+  list-style-type: disc;
+  padding-left: 2em;
+  margin-top: 0.5em;
+}
+
+.year-num {
+  font-size: 120%;
+  border: 1px solid #dddddd;
+  border-radius: 0.2em;
+  padding: 0.5em;
+}
+.year > li {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
