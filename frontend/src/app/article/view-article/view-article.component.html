@@ -1,3 +1,17 @@
-<p>
-  view-article works!
-</p>
+<article [id]="article.id">
+    <h2>{{article.title}}</h2>
+    <div class="infos">{{dateFormat}}</div>
+    <p>
+      {{article.text}}
+    </p>
+    <div class="toolbar">
+      <button (click)="toggleLike()" [ngClass]="{'liked': isLiked}">
+          {{isLiked? 'Unlike' : 'Like' }}
+        ({{likeNum}})
+      </button>
+      by {{article.author}}
+     </div>
+     <h4>Comments</h4>
+     <hr>
+  </article>
+

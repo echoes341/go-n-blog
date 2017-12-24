@@ -10,7 +10,7 @@ import { FooterComponent } from './footer/footer.component';
 import { ArticleItemComponent } from './article/article-list/article-item/article-item.component';
 import { UserinfoComponent } from './sidebar/userinfo/userinfo.component';
 import { ArtbydateRecapComponent } from './sidebar/artbydate-recap/artbydate-recap.component';
-import { Routes, RouterModule } from '@angular/router';
+import { Routes, RouterModule, ActivatedRoute } from '@angular/router';
 import { ViewArticleComponent } from './article/view-article/view-article.component';
 import { ArticleContainerComponent } from './article/article-container/article-container.component';
 
