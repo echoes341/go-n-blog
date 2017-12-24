@@ -27,3 +27,50 @@ hr {
   border: none;
   border-bottom: 1px solid #ddd;
 }
+
+a {
+  text-decoration: none;
+  color: #3277ff;
+  transition: color 80ms ease-in-out;
+}
+
+a:hover {
+  color: #0055ff;
+}
+
+
+a.h {
+  color: inherit;
+}
+
+
+button {
+  border: 1px solid hsl(220, 100%, 85%);
+  background-color: hsl(220, 100%, 95%);
+  padding: 0.5em 1em;
+  margin-right: 1em;
+  color: hsl(220, 45%, 25%);
+  border-radius: 0.2em;
+  transition: background-color 80ms ease-in-out;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: hsl(220, 100%, 80%);
+}
+
+article {
+  margin: 1em 0.2em;
+  padding: 1.5em 1.5em;
+}
+.liked {
+  background-color: hsl(220, 100%, 85%) !important;
+}
+
+@media (min-width: 756px) {
+  article {
+    margin: 1em;
+    padding: 1.5em 1.5em;
+    border-radius: 0.2em;
+  }
+}

@@ -7,7 +7,6 @@ import { LikeService } from '../like.service';
   selector: 'app-article-list',
   templateUrl: './article-list.component.html',
   styleUrls: ['./article-list.component.css'],
-  providers: [LikeService]
 })
 export class ArticleListComponent implements OnInit {
   articles: Article[];

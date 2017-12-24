@@ -34,10 +34,23 @@ export class ArticleService {
     )
   ];
 
+ /* All these methods should be handled by API */
+  public getArticleByID(id: number): Article {
+    let i = 0;
+    for (i = 0; i < this.articles.length; i++) {
+      if (this.articles[i].id == id) {
+        return this.articles[i];
+      }
+    }
+  }
+
   public getFirstsXFromDate(x: number, d: Date): Article[] {
     let result: Article[];
     result = this.articles.filter( element => {
       return element.date < d;
+    });
+    result.map(el => {
+      el.text = el.text.slice(0, 300);
     });
     this.sortArticles(result);
     return result.slice(0, x);
