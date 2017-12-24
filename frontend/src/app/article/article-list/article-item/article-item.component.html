@@ -6,8 +6,7 @@
   </p>
   <div class="toolbar">
     <button (click)="toggleLike()" [ngClass]="{'liked': isLiked}">
-        <ng-container *ngIf="isLiked; else like">Unlike</ng-container>
-        <ng-template #like>Like</ng-template>
+        {{isLiked? 'Unlike' : 'Like' }}
       ({{likeNum}})
     </button>
     <button>Comments: {{cCount}}</button>

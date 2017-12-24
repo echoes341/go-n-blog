@@ -24,15 +24,16 @@ export class ArticleItemComponent implements OnInit {
 
   ngOnInit() {
     this.cCount = this.commentServ.getCountCommentByArtID(this.article.id);
+
+    /* date formatting */
     const d = this.article.date;
-    let dF = d.getHours() + ':' + d.getMinutes() + ' ';
+    this.dateFormat = d.getHours() + ':' + d.getMinutes() + ' ';
     const day = d.getDate() < 10 ? '0' + d.getDate() : d.getDate();
     const month: string = d.getMonth() + 1 < 10 ? '0' + (d.getMonth() + 1) : (d.getMonth() + 1) + '';
-    dF += day + '-' + month + '-' + d.getFullYear();
-    this.dateFormat = dF;
+    this.dateFormat += day + '-' + month + '-' + d.getFullYear();
 
     this.likeNum = this.getLikeNum();
-    this.isLiked = false;
+    this.isLiked = this.likeServ.isLiked(this.article.id /*, userid*/);
 
   }
 

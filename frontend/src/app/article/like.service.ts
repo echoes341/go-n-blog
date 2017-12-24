@@ -16,6 +16,9 @@ export class LikeService {
     });
   }
 
+  public isLiked(id: number): boolean {
+    return  id === 2;
+  }
 
 }
 
