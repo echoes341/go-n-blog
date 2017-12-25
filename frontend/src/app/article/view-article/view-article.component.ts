@@ -4,6 +4,7 @@ import { CommentService } from '../../comments/comment.service';
 import { LikeService } from '../like.service';
 import { ArticleService } from '../article.service';
 import { ActivatedRoute } from '@angular/router';
+import { Comment } from '../../comments/comment.model';
 
 @Component({
   selector: 'app-view-article',
@@ -16,8 +17,9 @@ export class ViewArticleComponent implements OnInit {
   dateFormat: string;
   likeNum: number;
   isLiked: boolean;
+  comments: Comment[];
 
-  constructor(private commentServ: CommentService,
+  constructor(private cmmtServ: CommentService,
     private likeServ: LikeService,
     private aServ: ArticleService,
     private route: ActivatedRoute ) { }
@@ -36,6 +38,9 @@ export class ViewArticleComponent implements OnInit {
 
     this.likeNum = this.getLikeNum();
     this.isLiked = this.likeServ.isLiked(id /*, userid*/);
+
+    // retrieving comments from article id
+    this.comments = this.cmmtServ.getCommentByArtID(this.article.id);
 
   }
 

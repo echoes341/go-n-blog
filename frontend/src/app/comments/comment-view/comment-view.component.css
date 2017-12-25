@@ -1,0 +1,10 @@
+.name {
+    font-weight: bold;
+    padding-right: 0.5em;
+}
+
+.comment {
+    background-color: hsl(220, 60%, 90%);
+    padding: 0.5em 1.5em;
+    margin-top: 1em;
+}
