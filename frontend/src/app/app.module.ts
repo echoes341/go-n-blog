@@ -13,7 +13,6 @@ import { ArtbydateRecapComponent } from './sidebar/artbydate-recap/artbydate-rec
 import { Routes, RouterModule, ActivatedRoute } from '@angular/router';
 import { ViewArticleComponent } from './article/view-article/view-article.component';
 import { ArticleContainerComponent } from './article/article-container/article-container.component';
-import { CommentListComponent } from './comments/comment-list/comment-list.component';
 import { CommentViewComponent } from './comments/comment-view/comment-view.component';
 
 const appRoutes: Routes = [
@@ -33,7 +32,6 @@ const appRoutes: Routes = [
     ArtbydateRecapComponent,
     ViewArticleComponent,
     ArticleContainerComponent,
-    CommentListComponent,
     CommentViewComponent
   ],
   imports: [
