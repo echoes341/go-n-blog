@@ -14,6 +14,7 @@ import { Routes, RouterModule, ActivatedRoute } from '@angular/router';
 import { ViewArticleComponent } from './article/view-article/view-article.component';
 import { ArticleContainerComponent } from './article/article-container/article-container.component';
 import { CommentViewComponent } from './comments/comment-view/comment-view.component';
+import { AddCommentComponent } from './comments/add-comment/add-comment.component';
 
 const appRoutes: Routes = [
   {path: '', component: ArticleListComponent},
@@ -32,7 +33,8 @@ const appRoutes: Routes = [
     ArtbydateRecapComponent,
     ViewArticleComponent,
     ArticleContainerComponent,
-    CommentViewComponent
+    CommentViewComponent,
+    AddCommentComponent
   ],
   imports: [
     BrowserModule,
