@@ -9,6 +9,12 @@ import { Comment } from '../comment.model';
 export class CommentViewComponent implements OnInit {
   @Input() comment: Comment;
 
+  onEditComment() {
+
+  }
+  onRemoveComment() {
+
+  }
   constructor() { }
 
   ngOnInit() {
