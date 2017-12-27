@@ -15,10 +15,12 @@ import { ViewArticleComponent } from './article/view-article/view-article.compon
 import { ArticleContainerComponent } from './article/article-container/article-container.component';
 import { CommentViewComponent } from './comments/comment-view/comment-view.component';
 import { AddCommentComponent } from './comments/add-comment/add-comment.component';
+import { AddArticleComponent } from './article/add-article/add-article.component';
 
 const appRoutes: Routes = [
   {path: '', component: ArticleListComponent},
-  {path: 'article/:id', component: ViewArticleComponent}
+  {path: 'article/v/:id', component: ViewArticleComponent},
+  {path: 'article/new', component: AddArticleComponent}
 ];
 
 @NgModule({
@@ -34,7 +36,8 @@ const appRoutes: Routes = [
     ViewArticleComponent,
     ArticleContainerComponent,
     CommentViewComponent,
-    AddCommentComponent
+    AddCommentComponent,
+    AddArticleComponent
   ],
   imports: [
     BrowserModule,

@@ -1,8 +1,8 @@
 <article [id]="article.id">
-  <a [routerLink]="['article',article.id]" class="h"><h3>{{article.title}}</h3></a>
+  <a [routerLink]="['article','v',article.id]" class="h"><h3>{{article.title}}</h3></a>
   <div class="infos">by {{article.author}} - {{dateFormat}}</div>
   <p>
-    {{article.text}} ...<a [routerLink]="['article',article.id]">Read more</a>
+    {{article.text}} ...<a [routerLink]="['article','v',article.id]">Read more</a>
   </p>
   <div class="toolbar">
     <button (click)="toggleLike()" [ngClass]="{'liked': isLiked}">
