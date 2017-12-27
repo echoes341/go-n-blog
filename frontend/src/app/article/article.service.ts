@@ -70,6 +70,19 @@ export class ArticleService {
 
   }
 
+  lastId(): number {
+    let id = 0;
+    id = this.articles[0].id;
+    for (let i = 1; i < this.articles.length ; i++) {
+      if (id < this.articles[i].id) { id = this.articles[i].id; }
+    }
+    return id;
+  }
+
+  addArticle(a: Article) {
+    a.id = this.lastId() + 1;
+    this.articles.push(a);
+  }
 
   /* sort articles by date */
   public sort() {
