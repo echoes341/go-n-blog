@@ -31,6 +31,7 @@ export class CommentService {
       }
     }
     this.c.splice(i, 1);
+    return this.c;
   }
 
 }

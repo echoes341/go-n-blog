@@ -56,7 +56,6 @@ export class ViewArticleComponent implements OnInit {
 
 
   public removeComment(id: number) {
-    this.cmmtServ.removeComment(id);
-    this.comments = this.cmmtServ.getCommentByArtID(this.article.id);
+    this.comments = this.cmmtServ.removeComment(id);
   }
 }
