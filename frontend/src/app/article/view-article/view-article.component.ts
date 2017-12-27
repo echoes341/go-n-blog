@@ -26,7 +26,6 @@ export class ViewArticleComponent implements OnInit {
 
   ngOnInit() {
     const id = this.route.snapshot.params['id']; // get article ID
-    console.log(this.aServ.getArticleByID(id));
     this.article = this.aServ.getArticleByID(id); // get article
 
     /* date formatting */
