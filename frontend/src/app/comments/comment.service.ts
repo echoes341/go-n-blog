@@ -23,6 +23,13 @@ export class CommentService {
     return i;
   }
 
+  public addComment(comm: Comment) {
+    const newId = this.c[this.c.length - 1].id + 1;
+    /* TODO: userid*/
+    comm.id = newId;
+    this.c.push(comm);
+  }
+
   public removeComment(id: number) {
     let i = 0;
     for (i = 0; i < this.c.length; i++) {
@@ -31,7 +38,6 @@ export class CommentService {
       }
     }
     this.c.splice(i, 1);
-    return this.c;
   }
 
 }

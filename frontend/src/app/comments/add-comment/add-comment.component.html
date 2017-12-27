@@ -1,3 +1,6 @@
-<p>
-  add-comment works!
-</p>
+<div class="add-comment">
+  <input #name type="text" name="name" id="name" placeholder="You name">
+  <input #email type="email" name="email" id="email" placeholder="Your Email">
+  <textarea #content placeholder="Write something..."></textarea>
+  <button (click)="onAddComment(name.value,email.value,content.value)">Send</button>
+</div>

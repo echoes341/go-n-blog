@@ -54,8 +54,14 @@ export class ViewArticleComponent implements OnInit {
     this.isLiked = !this.isLiked;
   }
 
+  public addComment(c: Comment) {
+    c.idA = this.article.id;
+    this.cmmtServ.addComment(c);
+    this.comments = this.cmmtServ.getCommentByArtID(this.article.id);
+  }
 
   public removeComment(id: number) {
-    this.comments = this.cmmtServ.removeComment(id);
+    this.cmmtServ.removeComment(id);
+    this.comments = this.cmmtServ.getCommentByArtID(this.article.id);
   }
 }
