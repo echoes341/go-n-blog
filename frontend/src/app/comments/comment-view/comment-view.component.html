@@ -1,7 +1,14 @@
 <div class="comment">
-  <div class="toolbar"><button (click)="onEditComment()">Edit</button><button (click)="onRemoveComment()">Remove</button></div>
-  <p>
+  <div class="toolbar">
+    <button (click)="onToggleEdit()">{{!isEdit? 'Edit' : 'Cancel'}} </button>
+    <button (click)="onRemoveComment()">Remove</button></div>
+  <p *ngIf="!isEdit; else editor">
     <span class="name">{{comment.name}}</span>
     <span class="content">{{comment.content}}</span>
   </p>
+  <ng-template #editor>
+    <textarea #commentContent>{{comment.content}}</textarea><br>
+    <button (click)="onEditComment(commentContent.value)">Invia</button>
+  </ng-template>
+
 </div>

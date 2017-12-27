@@ -1,5 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter  } from '@angular/core';
 import { Comment } from '../comment.model';
+import { ElementRef } from '@angular/core/src/linker/element_ref';
+
+
 
 @Component({
   selector: 'app-comment-view',
@@ -8,16 +11,25 @@ import { Comment } from '../comment.model';
 })
 export class CommentViewComponent implements OnInit {
   @Input() comment: Comment;
+  @Output() removeEvent = new EventEmitter<number>();
+  isEdit: boolean;
 
-  onEditComment() {
-
+  onToggleEdit() {
+    this.isEdit = !this.isEdit;
   }
-  onRemoveComment() {
 
+  onEditComment(val: string) {
+    this.comment.content = val;
+    this.onToggleEdit();
+  }
+
+  onRemoveComment() {
+    this.removeEvent.emit(this.comment.id);
   }
   constructor() { }
 
   ngOnInit() {
+    this.isEdit = false;
   }
 
 }

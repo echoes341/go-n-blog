@@ -22,4 +22,15 @@ export class CommentService {
     });
     return i;
   }
+
+  public removeComment(id: number) {
+    let i = 0;
+    for (i = 0; i < this.c.length; i++) {
+      if (this.c[i].id === id) {
+        break;
+      }
+    }
+    this.c.splice(i, 1);
+  }
+
 }

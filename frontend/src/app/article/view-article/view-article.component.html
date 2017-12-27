@@ -14,6 +14,6 @@
      <h4>Comments</h4>
      <hr>
      <app-add-comment></app-add-comment>
-     <app-comment-view *ngFor="let comment of comments" [comment]="comment"></app-comment-view>
+     <app-comment-view *ngFor="let comment of comments" [comment]="comment" (removeEvent)="removeComment($event)"></app-comment-view>
   </article>
 
