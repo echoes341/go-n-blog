@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import * as Quill from 'quill';
 
 @Component({
   selector: 'app-add-article',
@@ -8,8 +9,15 @@ import { Component, OnInit } from '@angular/core';
 export class AddArticleComponent implements OnInit {
 
   constructor() { }
+  onAddArticle(content: any) {
+    console.log(content);
+  }
 
   ngOnInit() {
+
+    const quill = new Quill('#editor', {
+      theme: 'snow'
+    });
   }
 
 }
