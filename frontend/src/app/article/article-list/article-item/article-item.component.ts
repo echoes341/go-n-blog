@@ -6,6 +6,7 @@ import { Article } from '../../article.model';
 
 import { CommentService } from '../../../comments/comment.service';
 import { LikeService } from '../../like.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-article-item',
@@ -14,13 +15,18 @@ import { LikeService } from '../../like.service';
 })
 export class ArticleItemComponent implements OnInit {
 
+  // tslint:disable-next-line:no-input-rename
   @Input() article: Article;
+  strippedText: string;
   cCount: number;
   dateFormat: string;
   likeNum: number;
   isLiked: boolean;
 
-  constructor(private commentServ: CommentService, private likeServ: LikeService ) { }
+  constructor(private commentServ: CommentService,
+    private likeServ: LikeService,
+    private router: Router
+  ) { }
 
   ngOnInit() {
     this.cCount = this.commentServ.getCountCommentByArtID(this.article.id);
@@ -31,6 +37,8 @@ export class ArticleItemComponent implements OnInit {
     const day = d.getDate() < 10 ? '0' + d.getDate() : d.getDate();
     const month: string = d.getMonth() + 1 < 10 ? '0' + (d.getMonth() + 1) : (d.getMonth() + 1) + '';
     this.dateFormat += day + '-' + month + '-' + d.getFullYear();
+
+    this.strippedText = this.article.text.slice(0, 300);
 
     this.likeNum = this.getLikeNum();
     this.isLiked = this.likeServ.isLiked(this.article.id /*, userid*/);
@@ -47,4 +55,7 @@ export class ArticleItemComponent implements OnInit {
     this.isLiked = !this.isLiked;
   }
 
+  public onGoToComments() {
+    this.router.navigate(['/article', 'v', this.articleStripped.id], { fragment: 'comments'});
+  }
 }

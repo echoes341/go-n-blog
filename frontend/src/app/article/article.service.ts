@@ -14,10 +14,22 @@ export class ArticleService {
       5,
       'Articolo 2',
       'echoes',
-      `Lorem ipsum dolor sit amet consectetur adipisicing elit.
+      `Lorem ipsum dolor sit amet consectetur adipisicing elit.<br>
     Qui quasi eum eveniet perspiciatis repellat minus tempora in
     reprehenderit porro culpa! Reprehenderit dolorem esse ullam, saepe atque quia
-    distinctio recusandae maxime possimus soluta!
+    distinctio recusandae maxime possimus soluta!<br>
+    Aliquid exercitationem veritatis, dolores culpa ratione sint expedita.Lorem ipsum dolor sit amet consectetur adipisicing elit.<br>
+    Qui quasi eum eveniet perspiciatis repellat minus tempora in
+    reprehenderit porro culpa! Reprehenderit dolorem esse ullam, saepe atque quia
+    distinctio recusandae maxime possimus soluta!<br>
+    Aliquid exercitationem veritatis, dolores culpa ratione sint expedita.Lorem ipsum dolor sit amet consectetur adipisicing elit.<br>
+    Qui quasi eum eveniet perspiciatis repellat minus tempora in
+    reprehenderit porro culpa! Reprehenderit dolorem esse ullam, saepe atque quia
+    distinctio recusandae maxime possimus soluta!<br>
+    Aliquid exercitationem veritatis, dolores culpa ratione sint expedita.Lorem ipsum dolor sit amet consectetur adipisicing elit.<br>
+    Qui quasi eum eveniet perspiciatis repellat minus tempora in
+    reprehenderit porro culpa! Reprehenderit dolorem esse ullam, saepe atque quia
+    distinctio recusandae maxime possimus soluta!<br>
     Aliquid exercitationem veritatis, dolores culpa ratione sint expedita. `,
       new Date(2017, 9, 21, 17, 21)
     ),
@@ -49,9 +61,6 @@ export class ArticleService {
     let result: Article[];
     result = this.articles.filter( element => {
       return element.date < d;
-    });
-    result.map(el => {
-      el.text = el.text.slice(0, 300);
     });
     this.sortArticles(result);
     return result.slice(0, x);
