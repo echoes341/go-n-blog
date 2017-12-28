@@ -1,6 +1,8 @@
+// Modules
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
+// Components
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import { ArticleListComponent } from './article/article-list/article-list.component';
@@ -11,10 +13,15 @@ import { UserinfoComponent } from './sidebar/userinfo/userinfo.component';
 import { ArtbydateRecapComponent } from './sidebar/artbydate-recap/artbydate-recap.component';
 import { Routes, RouterModule, ActivatedRoute } from '@angular/router';
 import { ViewArticleComponent } from './article/view-article/view-article.component';
-import { ArticleContainerComponent } from './article/article-container/article-container.component';
 import { CommentViewComponent } from './comments/comment-view/comment-view.component';
 import { AddCommentComponent } from './comments/add-comment/add-comment.component';
 import { AddArticleComponent } from './article/add-article/add-article.component';
+import { ViewerComponent } from './viewer/viewer.component';
+
+// Services
+import { CommentService } from './comments/comment.service';
+import { ArticleService } from './article/article.service';
+import { LikeService } from './article/like.service';
 
 const appRoutes: Routes = [
   {path: '', component: ArticleListComponent},
@@ -33,16 +40,16 @@ const appRoutes: Routes = [
     UserinfoComponent,
     ArtbydateRecapComponent,
     ViewArticleComponent,
-    ArticleContainerComponent,
     CommentViewComponent,
     AddCommentComponent,
-    AddArticleComponent
+    AddArticleComponent,
+    ViewerComponent
   ],
   imports: [
     BrowserModule,
     RouterModule.forRoot(appRoutes)
   ],
-  providers: [],
+  providers: [CommentService, ArticleService, LikeService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

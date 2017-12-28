@@ -31,7 +31,7 @@
   grid-area: hd;
 }
 
-.article-container {
+.viewer {
   grid-area: main;
 }
 
