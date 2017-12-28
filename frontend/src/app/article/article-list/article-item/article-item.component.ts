@@ -56,6 +56,6 @@ export class ArticleItemComponent implements OnInit {
   }
 
   public onGoToComments() {
-    this.router.navigate(['/article', 'v', this.articleStripped.id], { fragment: 'comments'});
+    this.router.navigate(['/article', 'v', this.article.id], { fragment: 'comments'});
   }
 }
