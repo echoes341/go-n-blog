@@ -1,11 +1,4 @@
 import { Component, OnInit, Input } from '@angular/core';
-
-import { Article } from '../../article.model';
-
-
-
-import { CommentService } from '../../../comments/comment.service';
-import { LikeService } from '../../like.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -15,41 +8,20 @@ import { Router } from '@angular/router';
 })
 export class ArticleItemComponent implements OnInit {
 
-  // tslint:disable-next-line:no-input-rename
-  @Input() article: Article;
-  text: string;
-  cCount: number;
-  dateFormat: string;
-  likeNum: number;
-  isLiked: boolean;
-  isSliced: boolean;
+  @Input() id: number;
+  @Input() title: string;
+  @Input() author: string;
+  @Input() text: string;
+  @Input() date: string;
+  @Input() commentNum: number;
+  @Input() likeNum: number;
+  @Input() isLiked: boolean;
+  @Input() isSliced: boolean;
 
-  constructor(private commentServ: CommentService,
-    private likeServ: LikeService,
-    private router: Router
-  ) { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
-    this.cCount = this.commentServ.getCountCommentByArtID(this.article.id);
 
-    /* date formatting */
-    const d = this.article.date;
-    this.dateFormat = d.getHours() + ':' + d.getMinutes() + ' ';
-    const day = d.getDate() < 10 ? '0' + d.getDate() : d.getDate();
-    const month: string = d.getMonth() + 1 < 10 ? '0' + (d.getMonth() + 1) : (d.getMonth() + 1) + '';
-    this.dateFormat += day + '-' + month + '-' + d.getFullYear();
-
-    this.isSliced = this.article.text.length > 300;
-    this.text = this.isSliced ? this.article.text.slice(0, 300) : this.article.text;
-
-    this.likeNum = this.getLikeNum();
-    this.isLiked = this.likeServ.isLiked(this.article.id /*, userid*/);
-
-  }
-
-  public getLikeNum(): number {
-    const likes = this.likeServ.getLikeByArtID(this.article.id);
-    return likes.length;
   }
 
   public toggleLike() {
@@ -58,6 +30,6 @@ export class ArticleItemComponent implements OnInit {
   }
 
   public onGoToComments() {
-    this.router.navigate(['/article', 'v', this.article.id], { fragment: 'comments'});
+    this.router.navigate(['/article', 'v', this.id], { fragment: 'comments'});
   }
 }

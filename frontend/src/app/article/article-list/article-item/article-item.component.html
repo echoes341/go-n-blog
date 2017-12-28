@@ -1,14 +1,14 @@
-<article [id]="article.id">
-  <a [routerLink]="['article','v',article.id]" class="h"><h3>{{article.title}}</h3></a>
-  <div class="infos">by {{article.author}} - {{dateFormat}}</div>
+<article [id]="id">
+  <a [routerLink]="['article', 'v', id]" class="h"><h3>{{title}}</h3></a>
+  <div class="infos">by {{author}} - {{date}}</div>
   <p>
-    <span [innerHTML]="text"></span> ...<a *ngIf="isSliced" [routerLink]="['article','v',article.id]">Read more</a>
+    <span [innerHTML]="text"></span> <a *ngIf="isSliced" [routerLink]="['article', 'v', id]">...Read more</a>
     </p>
   <div class="toolbar">
     <button (click)="toggleLike()" [ngClass]="{'liked': isLiked}">
         {{isLiked? 'Unlike' : 'Like' }}
       ({{likeNum}})
     </button>
-    <button (click)="onGoToComments()">Comments: {{cCount}}</button>
+    <button (click)="onGoToComments()">Comments: {{commentNum}}</button>
    </div>
 </article>

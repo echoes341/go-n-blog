@@ -1,1 +1,11 @@
-    <app-article-item *ngFor="let a of articles" [article]="a"></app-article-item>
+    <app-article-item *ngFor="let a of articlesList"
+    [id]="a.id"
+    [title]="a.title"
+    [author]="a.author"
+    [date]="a.date"
+    [isSliced]="a.isSliced"
+    [text]="a.text"
+    [isLiked]="a.isLiked"
+    [likeNum]="a.lCount"
+    [commentNum]="a.cCount"
+    ></app-article-item>
