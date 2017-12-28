@@ -88,9 +88,11 @@ export class ArticleService {
     return id;
   }
 
-  addArticle(a: Article) {
-    a.id = this.lastId() + 1;
+  addArticle(a: Article): number  {
+    const id = this.lastId() + 1;
+    a.id = id;
     this.articles.push(a);
+    return id;
   }
 
   /* sort articles by date */
