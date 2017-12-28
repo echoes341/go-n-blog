@@ -67,6 +67,10 @@ article {
   background-color: hsl(220, 100%, 85%) !important;
 }
 
+strong {
+  font-weight: bold;
+}
+
 @media (min-width: 756px) {
   article {
     margin: 1em;
