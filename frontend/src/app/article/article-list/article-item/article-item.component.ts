@@ -17,11 +17,12 @@ export class ArticleItemComponent implements OnInit {
 
   // tslint:disable-next-line:no-input-rename
   @Input() article: Article;
-  strippedText: string;
+  text: string;
   cCount: number;
   dateFormat: string;
   likeNum: number;
   isLiked: boolean;
+  isSliced: boolean;
 
   constructor(private commentServ: CommentService,
     private likeServ: LikeService,
@@ -38,7 +39,8 @@ export class ArticleItemComponent implements OnInit {
     const month: string = d.getMonth() + 1 < 10 ? '0' + (d.getMonth() + 1) : (d.getMonth() + 1) + '';
     this.dateFormat += day + '-' + month + '-' + d.getFullYear();
 
-    this.strippedText = this.article.text.slice(0, 300);
+    this.isSliced = this.article.text.length > 300;
+    this.text = this.isSliced ? this.article.text.slice(0, 300) : this.article.text;
 
     this.likeNum = this.getLikeNum();
     this.isLiked = this.likeServ.isLiked(this.article.id /*, userid*/);
