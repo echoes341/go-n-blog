@@ -25,7 +25,7 @@ export class ViewArticleComponent implements OnInit {
     private route: ActivatedRoute ) { }
 
   ngOnInit() {
-    const id = this.route.snapshot.params['id']; // get article ID
+    const id = +this.route.snapshot.params['id']; // get article ID
     this.article = this.aServ.getArticleByID(id); // get article
 
     /* date formatting */

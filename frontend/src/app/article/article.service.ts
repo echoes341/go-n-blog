@@ -39,7 +39,7 @@ export class ArticleService {
     let i = 0;
     for (i = 0; i < this.articles.length; i++) {
       // tslint:disable-next-line:triple-equals
-      if (this.articles[i].id == id) {
+      if (this.articles[i].id === id) {
         return this.articles[i];
       }
     }
