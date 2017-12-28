@@ -1,8 +1,8 @@
 <article [id]="article.id">
     <h2>{{article.title}}</h2>
     <div class="infos">{{dateFormat}}</div>
-    <p>
-      {{article.text}}
+    <p [innerHTML]="article.text">
+
     </p>
     <div class="toolbar">
       <button (click)="toggleLike()" [ngClass]="{'liked': isLiked}">
@@ -11,7 +11,7 @@
       </button>
       by {{article.author}}
      </div>
-     <h4>Comments</h4>
+     <h4 id="#comments">Comments</h4>
      <hr>
      <app-add-comment (addComment)="addComment($event)"></app-add-comment>
      <app-comment-view *ngFor="let comment of comments" [comment]="comment" (removeEvent)="removeComment($event)"></app-comment-view>
