@@ -1,9 +1,9 @@
 
 <div class="new-article" >
-  <p><label for="title">Title: </label><input type="text" name="title" id="title" #title></p>
-  <p><label for="author">Author: </label><input type="text" name="author" id="author" placeholder="author" #author></p>
+  <p><label for="title">Title: </label><input type="text" name="title" id="title" [(ngModel)]="title"> </p>
+  <p><label for="author">Author: </label><input type="text" name="author" id="author" placeholder="author" [(ngModel)]="author"></p>
   <p>Text:</p>
   <div id="editor"></div>
-  <button (click)="onAddArticle(title.value,author.value)">Send</button>
+  <button (click)="onAddArticle()">Send</button>
 
 </div>

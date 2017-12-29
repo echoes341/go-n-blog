@@ -1,6 +1,7 @@
 // Modules
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 // Components
 import { AppComponent } from './app.component';
@@ -22,11 +23,12 @@ import { ViewerComponent } from './viewer/viewer.component';
 import { CommentService } from './comments/comment.service';
 import { ArticleService } from './article/article.service';
 import { LikeService } from './article/like.service';
+import { CanDeactivateGuard } from './can-deactivated-guard.service';
 
 const appRoutes: Routes = [
   {path: '', component: ArticleListComponent},
   {path: 'article/v/:id', component: ViewArticleComponent},
-  {path: 'article/new', component: AddArticleComponent}
+  {path: 'article/new', component: AddArticleComponent, canDeactivate: [CanDeactivateGuard]}
 ];
 
 @NgModule({
@@ -47,9 +49,10 @@ const appRoutes: Routes = [
   ],
   imports: [
     BrowserModule,
+    FormsModule,
     RouterModule.forRoot(appRoutes)
   ],
-  providers: [CommentService, ArticleService, LikeService],
+  providers: [CommentService, ArticleService, LikeService, CanDeactivateGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
