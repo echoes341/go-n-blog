@@ -5,4 +5,13 @@ h3 {
 article {
   border: 1px solid #dddddd;
   border-bottom: 0.4em solid #4f89ff;
+  position: relative;
+}
+
+.admin {
+  position: absolute;
+  right: 0;
+}
+.admin > a {
+  margin-right: 2em;
 }

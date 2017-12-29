@@ -1,4 +1,8 @@
 <article [id]="id">
+  <div class="admin">
+    <a [routerLink]="['article', 'edit', id]">Edit</a>
+    <a [routerLink]="['article', 'delete', id]">Delete</a>
+  </div>
   <a [routerLink]="['article', 'v', id]" class="h"><h3>{{title}}</h3></a>
   <div class="infos">by {{author}} - {{date}}</div>
   <p>

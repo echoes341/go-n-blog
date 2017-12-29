@@ -24,11 +24,15 @@ import { CommentService } from './comments/comment.service';
 import { ArticleService } from './article/article.service';
 import { LikeService } from './article/like.service';
 import { CanDeactivateGuard } from './can-deactivated-guard.service';
+import { EditArticleComponent } from './article/edit-article/edit-article.component';
+import { DeleteArticleComponent } from './article/delete-article/delete-article.component';
 
 const appRoutes: Routes = [
   {path: '', component: ArticleListComponent},
   {path: 'article/v/:id', component: ViewArticleComponent},
-  {path: 'article/new', component: AddArticleComponent, canDeactivate: [CanDeactivateGuard]}
+  {path: 'article/new', component: AddArticleComponent, canDeactivate: [CanDeactivateGuard]},
+  {path: 'article/delete/:id', component: DeleteArticleComponent, canDeactivate: [CanDeactivateGuard]},
+  {path: 'article/edit/:id', component: EditArticleComponent, canDeactivate: [CanDeactivateGuard]}
 ];
 
 @NgModule({
@@ -45,7 +49,9 @@ const appRoutes: Routes = [
     CommentViewComponent,
     AddCommentComponent,
     AddArticleComponent,
-    ViewerComponent
+    ViewerComponent,
+    EditArticleComponent,
+    DeleteArticleComponent
   ],
   imports: [
     BrowserModule,
