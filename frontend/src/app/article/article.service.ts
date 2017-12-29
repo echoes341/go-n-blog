@@ -1,6 +1,5 @@
 import { Article, ArticleRecap } from './article.model';
 
-
 export class ArticleService {
   public articles = [
     new Article(
@@ -46,7 +45,7 @@ export class ArticleService {
     )
   ];
 
- /* All these methods should be handled by API */
+  /* All these methods should be handled by API */
   public getArticleByID(id: number): Article {
     let i = 0;
     for (i = 0; i < this.articles.length; i++) {
@@ -59,7 +58,7 @@ export class ArticleService {
 
   public getFirstsXFromDate(x: number, d: Date): Article[] {
     let result: Article[];
-    result = this.articles.filter( element => {
+    result = this.articles.filter(element => {
       return element.date < d;
     });
     this.sortArticles(result);
@@ -74,25 +73,37 @@ export class ArticleService {
       new ArticleRecap(2017, 11, 4),
       new ArticleRecap(2017, 9, 2),
       new ArticleRecap(2017, 0, 1),
-      new ArticleRecap(2018, 11, 4),
+      new ArticleRecap(2018, 11, 4)
     ];
-
   }
 
   lastId(): number {
     let id = 0;
     id = this.articles[0].id;
-    for (let i = 1; i < this.articles.length ; i++) {
-      if (id < this.articles[i].id) { id = this.articles[i].id; }
+    for (let i = 1; i < this.articles.length; i++) {
+      if (id < this.articles[i].id) {
+        id = this.articles[i].id;
+      }
     }
     return id;
   }
 
-  addArticle(a: Article): number  {
+  addArticle(a: Article): number {
     const id = this.lastId() + 1;
     a.id = id;
     this.articles.push(a);
     return id;
+  }
+
+  editArticle(a: Article): boolean {
+    let i;
+    for (i = 0; i < this.articles.length; i++) {
+      if (this.articles[i].id === a.id) {
+        this.articles[i] = a;
+        return true;
+      }
+    }
+    return false;
   }
 
   /* sort articles by date */
@@ -100,7 +111,8 @@ export class ArticleService {
     this.sortArticles(this.articles);
   }
   public sortArticles(art: Article[]) {
-    art.sort( function(a, b) { // order from the most recent
+    art.sort(function(a, b) {
+      // order from the most recent
       const d1 = a.date;
       const d2 = b.date;
       return d1 > d2 ? -1 : d1 < d2 ? +1 : 0;

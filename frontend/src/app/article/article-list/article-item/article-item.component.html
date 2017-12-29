@@ -1,12 +1,12 @@
 <article [id]="id">
   <div class="admin">
-    <a [routerLink]="['article', 'edit', id]">Edit</a>
-    <a [routerLink]="['article', 'delete', id]">Delete</a>
+    <a [routerLink]="['/article', 'edit', id]">Edit</a>
+    <a [routerLink]="['/article', 'delete', id]">Delete</a>
   </div>
-  <a [routerLink]="['article', 'v', id]" class="h"><h3>{{title}}</h3></a>
+  <a [routerLink]="['/article', 'v', id]" class="h"><h3>{{title}}</h3></a>
   <div class="infos">by {{author}} - {{date}}</div>
   <p>
-    <span [innerHTML]="text"></span> <a *ngIf="isSliced" [routerLink]="['article', 'v', id]">...Read more</a>
+    <span [innerHTML]="text"></span> <a *ngIf="isSliced" [routerLink]="['/article', 'v', id]">...Read more</a>
     </p>
   <div class="toolbar">
     <button (click)="toggleLike()" [ngClass]="{'liked': isLiked}">
