@@ -31,7 +31,7 @@ const appRoutes: Routes = [
   {path: '', component: ArticleListComponent},
   {path: 'article/v/:id', component: ViewArticleComponent},
   {path: 'article/new', component: AddArticleComponent, canDeactivate: [CanDeactivateGuard]},
-  {path: 'article/delete/:id', component: DeleteArticleComponent, canDeactivate: [CanDeactivateGuard]},
+  {path: 'article/delete/:id', component: DeleteArticleComponent},
   {path: 'article/edit/:id', component: EditArticleComponent, canDeactivate: [CanDeactivateGuard]}
 ];
 

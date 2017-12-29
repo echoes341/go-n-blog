@@ -15,6 +15,7 @@ export class AddArticleComponent implements OnInit, CanComponentDeactivate {
   title: string;
   author: string;
   quill: Quill;
+  isAdded = false;
   constructor(private aServ: ArticleService, private route: Router) {}
   onAddArticle() {
     const a = new Article(
@@ -27,6 +28,7 @@ export class AddArticleComponent implements OnInit, CanComponentDeactivate {
       new Date()
     );
     const id = this.aServ.addArticle(a);
+    this.isAdded = true;
     this.route.navigate(['/article', 'v', id]);
   }
 
@@ -34,7 +36,7 @@ export class AddArticleComponent implements OnInit, CanComponentDeactivate {
 
     if (
       // !!str ->Boolean(str) -> !isEmpty? false: empty | true: notEmpty
-      !!this.title  || this.quill.getText().length !== 1
+      !this.isAdded && (!!this.title  || this.quill.getText().length !== 1)
       ) {
       return confirm('If you change the page the current content will be lost. OK?');
     } else {
