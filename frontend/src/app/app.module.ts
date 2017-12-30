@@ -2,6 +2,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { QuillEditorModule } from 'ngx-quill-editor';
 
 // Components
 import { AppComponent } from './app.component';
@@ -51,11 +52,12 @@ const appRoutes: Routes = [
     AddArticleComponent,
     ViewerComponent,
     EditArticleComponent,
-    DeleteArticleComponent
+    DeleteArticleComponent,
   ],
   imports: [
     BrowserModule,
     FormsModule,
+    QuillEditorModule,
     RouterModule.forRoot(appRoutes)
   ],
   providers: [CommentService, ArticleService, LikeService, CanDeactivateGuard],

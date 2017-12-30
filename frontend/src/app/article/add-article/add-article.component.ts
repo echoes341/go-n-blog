@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import * as Quill from 'quill';
 import { Article } from '../article.model';
 import { ArticleService } from '../article.service';
 import { Router } from '@angular/router';
@@ -12,9 +11,9 @@ import { Observable } from 'rxjs/Observable';
   styleUrls: ['./add-article.component.css']
 })
 export class AddArticleComponent implements OnInit, CanComponentDeactivate {
-  title: string;
-  author: string;
-  quill: Quill;
+  title = '';
+  author = 'echoes';
+  text = '';
   isAdded = false;
   constructor(private aServ: ArticleService, private route: Router) {}
   onAddArticle() {
@@ -22,9 +21,7 @@ export class AddArticleComponent implements OnInit, CanComponentDeactivate {
       -1,
       this.title,
       this.author,
-      // Picking HTML from editor as suggested in official quill's github.
-      // Even if it's not the safest idea ever, actually.
-      this.quill.root.innerHTML,
+      this.text,
       new Date()
     );
     const id = this.aServ.addArticle(a);
@@ -34,9 +31,14 @@ export class AddArticleComponent implements OnInit, CanComponentDeactivate {
 
   canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
 
+    console.log(Boolean(this.text));
     if (
-      // !!str ->Boolean(str) -> !isEmpty? false: empty | true: notEmpty
-      !this.isAdded && (!!this.title  || this.quill.getText().length !== 1)
+      /*
+        Here || force boolean conversion of strings
+        It works like a isNotEmpty() func:
+        string  empty  -> false
+      */
+      !this.isAdded && (this.title  || this.text)
       ) {
       return confirm('If you change the page the current content will be lost. OK?');
     } else {
@@ -45,8 +47,5 @@ export class AddArticleComponent implements OnInit, CanComponentDeactivate {
   }
 
   ngOnInit() {
-    this.quill = new Quill('#editor', {
-      theme: 'snow'
-    });
   }
 }
