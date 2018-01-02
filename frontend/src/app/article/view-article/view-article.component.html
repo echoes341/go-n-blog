@@ -1,8 +1,8 @@
 <article [id]="article.id">
-    <div class="admin">
-        <a [routerLink]="['/article', 'edit', article.id]">Edit</a>
-        <a [routerLink]="['/article', 'delete', article.id]">Delete</a>
-      </div>
+  <div class="admin">
+    <a [routerLink]="[article.id, 'edit']">Edit</a>
+    <a [routerLink]="['article.id', 'delete']">Delete</a>
+  </div>
     <h2>{{article.title}}</h2>
     <div class="infos">{{dateFormat}}</div>
     <p [innerHTML]="article.text">

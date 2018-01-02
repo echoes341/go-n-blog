@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { QuillEditorModule } from 'ngx-quill-editor';
+import { Routes, RouterModule, ActivatedRoute } from '@angular/router';
 
 // Components
 import { AppComponent } from './app.component';
@@ -13,7 +14,6 @@ import { FooterComponent } from './footer/footer.component';
 import { ArticleItemComponent } from './article/article-list/article-item/article-item.component';
 import { UserinfoComponent } from './sidebar/userinfo/userinfo.component';
 import { ArtbydateRecapComponent } from './sidebar/artbydate-recap/artbydate-recap.component';
-import { Routes, RouterModule, ActivatedRoute } from '@angular/router';
 import { ViewArticleComponent } from './article/view-article/view-article.component';
 import { CommentViewComponent } from './comments/comment-view/comment-view.component';
 import { AddCommentComponent } from './comments/add-comment/add-comment.component';
@@ -27,14 +27,8 @@ import { LikeService } from './article/like.service';
 import { CanDeactivateGuard } from './can-deactivated-guard.service';
 import { EditArticleComponent } from './article/edit-article/edit-article.component';
 import { DeleteArticleComponent } from './article/delete-article/delete-article.component';
+import { AppRoutes } from './app-routes.module';
 
-const appRoutes: Routes = [
-  {path: '', component: ArticleListComponent},
-  {path: 'article/v/:id', component: ViewArticleComponent},
-  {path: 'article/new', component: AddArticleComponent, canDeactivate: [CanDeactivateGuard]},
-  {path: 'article/delete/:id', component: DeleteArticleComponent},
-  {path: 'article/edit/:id', component: EditArticleComponent, canDeactivate: [CanDeactivateGuard]}
-];
 
 @NgModule({
   declarations: [
@@ -58,7 +52,7 @@ const appRoutes: Routes = [
     BrowserModule,
     FormsModule,
     QuillEditorModule,
-    RouterModule.forRoot(appRoutes)
+    AppRoutes
   ],
   providers: [CommentService, ArticleService, LikeService, CanDeactivateGuard],
   bootstrap: [AppComponent]
