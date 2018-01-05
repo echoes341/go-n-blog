@@ -1,6 +1,8 @@
 <div class="add-comment">
-  <input #name type="text" name="name" id="name" placeholder="You name">
-  <input #email type="email" name="email" id="email" placeholder="Your Email">
-  <textarea #content placeholder="Write something..."></textarea>
-  <button (click)="onAddComment(name.value,email.value,content.value)">Send</button>
+  <form  #f="ngForm" (ngSubmit)="onAddComment(f)" >
+  <input type="text" name="name" id="name" placeholder="You name" required ngModel>
+  <input type="email" name="email" id="email" placeholder="Your Email" required ngModel>
+  <textarea placeholder="Write something..." required ngModel name="text"></textarea>
+  <button type="submit" [disabled]="!f.valid">Send</button>
+</form>
 </div>

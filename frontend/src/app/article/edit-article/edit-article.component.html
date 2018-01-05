@@ -1,9 +1,10 @@
 <div class="edit-article">
-  <p>
-    <label for="title">Title: </label>
-    <input type="text" name="title" id="title" [(ngModel)]="title"> </p>
-  <p>Text:</p>
-  <quill-editor [(ngModel)]="text"></quill-editor>
-  <button (click)="onEditArticle()">Edit</button>
-
+  <form (ngSubmit)="onEditArticle()" #f="ngForm">
+    <p>
+      <label for="title">Title: </label>
+      <input type="text" name="title" id="title" [(ngModel)]="title" required> </p>
+    <p>Text:</p>
+    <quill-editor [(ngModel)]="text" required name="text" class="editor"></quill-editor>
+    <button type="submit" [disabled]="!f.valid">Edit</button>
+  </form>
 </div>

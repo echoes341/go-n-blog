@@ -38,7 +38,6 @@ export class ArtbydateRecapComponent implements OnInit {
       this.list[el.year][el.month] = el.c;
 
     });
-    console.log(this.list);
   }
 
 }

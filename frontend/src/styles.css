@@ -55,9 +55,21 @@ button {
   cursor: pointer;
 }
 
-button:hover {
+button:hover:enabled {
   background-color: hsl(220, 100%, 80%);
 }
+
+button:disabled{
+  background-color: hsl(220, 100%, 93%);
+  color: hsl(220, 16%, 60%);
+}
+
+
+input.ng-invalid.ng-touched, textarea.ng-invalid.ng-touched, .editor.ng-invalid.ng-touched .ql-snow{
+  border: 1px solid rgb(255, 81, 81) !important;
+  box-shadow: 0px 0px 5px hsl(0, 100%, 74%)!important;
+}
+
 
 article {
   margin: 1em 0.2em;

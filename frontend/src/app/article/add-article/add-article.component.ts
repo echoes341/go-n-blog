@@ -4,6 +4,7 @@ import { ArticleService } from '../article.service';
 import { Router } from '@angular/router';
 import { CanComponentDeactivate } from '../../can-deactivated-guard.service';
 import { Observable } from 'rxjs/Observable';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-add-article',
@@ -26,7 +27,7 @@ export class AddArticleComponent implements OnInit, CanComponentDeactivate {
     );
     const id = this.aServ.addArticle(a);
     this.isAdded = true;
-    this.route.navigate(['/article', 'v', id]);
+    this.route.navigate(['/', id]);
   }
 
   canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {

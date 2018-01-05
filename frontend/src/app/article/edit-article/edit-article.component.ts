@@ -39,7 +39,7 @@ export class EditArticleComponent implements OnInit, CanComponentDeactivate {
       this.article.title = this.title;
       this.article.text = this.text;
       this.aServ.editArticle(this.article);
-      this.router.navigate(['/article', 'v', this.article.id]);
+      this.router.navigate(['/', this.article.id]);
     } else {
       alert('Nothing changed!');
     }
