@@ -7,8 +7,10 @@
     <span class="content">{{comment.content}}</span>
   </p>
   <ng-template #editor>
-    <textarea #commentContent>{{comment.content}}</textarea><br>
-    <button (click)="onEditComment(commentContent.value)">Invia</button>
+    <form (ngSubmit)="onEditComment(commentInput.value)" #f="ngForm">
+      <textarea name="commentContent" #commentInput required [ngModel]="comment.content" rows="5"></textarea><br>
+      <button type="submit" [disabled]="!f.valid">Invia</button>
+    </form>
   </ng-template>
 
 </div>
