@@ -27,6 +27,7 @@ import { CanDeactivateGuard } from './can-deactivated-guard.service';
 import { EditArticleComponent } from './article/edit-article/edit-article.component';
 import { DeleteArticleComponent } from './article/delete-article/delete-article.component';
 import { AppRoutes } from './app-routes.module';
+import { SignupComponent } from './user/signup/signup.component';
 
 
 @NgModule({
@@ -45,6 +46,7 @@ import { AppRoutes } from './app-routes.module';
     ViewerComponent,
     EditArticleComponent,
     DeleteArticleComponent,
+    SignupComponent,
   ],
   imports: [
     BrowserModule,

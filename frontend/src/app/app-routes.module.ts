@@ -7,13 +7,18 @@ import { CanDeactivateGuard } from './can-deactivated-guard.service';
 import { DeleteArticleComponent } from './article/delete-article/delete-article.component';
 import { EditArticleComponent } from './article/edit-article/edit-article.component';
 
+import { SignupComponent } from './user/signup/signup.component';
+
+
 
 const appRoutes: Routes = [
   {path: '', component: ArticleListComponent},
   {path: 'new', component: EditArticleComponent, canDeactivate: [CanDeactivateGuard]},
   {path: ':id/delete', component: DeleteArticleComponent},
   {path: ':id/edit', component: EditArticleComponent, canDeactivate: [CanDeactivateGuard]},
-  {path: ':id', component: ViewArticleComponent}
+  {path: ':id', component: ViewArticleComponent},
+  {path: 'user/signup', component: SignupComponent}
+
 ];
 
 @NgModule({
