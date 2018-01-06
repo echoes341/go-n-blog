@@ -28,6 +28,7 @@ import { EditArticleComponent } from './article/edit-article/edit-article.compon
 import { DeleteArticleComponent } from './article/delete-article/delete-article.component';
 import { AppRoutes } from './app-routes.module';
 import { SignupComponent } from './user/signup/signup.component';
+import { LoginComponent } from './user/login/login.component';
 
 
 @NgModule({
@@ -47,6 +48,7 @@ import { SignupComponent } from './user/signup/signup.component';
     EditArticleComponent,
     DeleteArticleComponent,
     SignupComponent,
+    LoginComponent,
   ],
   imports: [
     BrowserModule,

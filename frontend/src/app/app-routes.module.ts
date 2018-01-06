@@ -8,6 +8,7 @@ import { DeleteArticleComponent } from './article/delete-article/delete-article.
 import { EditArticleComponent } from './article/edit-article/edit-article.component';
 
 import { SignupComponent } from './user/signup/signup.component';
+import { LoginComponent } from './user/login/login.component';
 
 
 
@@ -17,7 +18,8 @@ const appRoutes: Routes = [
   {path: ':id/delete', component: DeleteArticleComponent},
   {path: ':id/edit', component: EditArticleComponent, canDeactivate: [CanDeactivateGuard]},
   {path: ':id', component: ViewArticleComponent},
-  {path: 'user/signup', component: SignupComponent}
+  {path: 'user/signup', component: SignupComponent},
+  {path: 'user/login', component: LoginComponent}
 
 ];
 

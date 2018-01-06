@@ -1,0 +1,10 @@
+<form #f="ngForm" (ngSubmit)="onLogin()">
+  <h2>Login</h2>
+  <p>
+    <input type="text" name="username" id="username" ngModel required placeholder="Username">
+  </p>
+  <p>
+    <input type="password" name="password" id="password" ngModel required placeholder="Password">
+  </p>
+  <button type="submit" [disabled]="!f.valid">Sign in</button>
+</form>
