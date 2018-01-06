@@ -17,7 +17,6 @@ import { ArtbydateRecapComponent } from './sidebar/artbydate-recap/artbydate-rec
 import { ViewArticleComponent } from './article/view-article/view-article.component';
 import { CommentViewComponent } from './comments/comment-view/comment-view.component';
 import { AddCommentComponent } from './comments/add-comment/add-comment.component';
-import { AddArticleComponent } from './article/add-article/add-article.component';
 import { ViewerComponent } from './viewer/viewer.component';
 
 // Services
@@ -43,7 +42,6 @@ import { AppRoutes } from './app-routes.module';
     ViewArticleComponent,
     CommentViewComponent,
     AddCommentComponent,
-    AddArticleComponent,
     ViewerComponent,
     EditArticleComponent,
     DeleteArticleComponent,
