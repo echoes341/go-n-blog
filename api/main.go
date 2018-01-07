@@ -34,7 +34,7 @@ type articleDB struct {
 
 // Article is article struct
 type Article struct {
-	ID     int       `json:"id"`
+	ID     uint      `json:"id"`
 	Title  string    `json:"title"`
 	Author string    `json:"author"`
 	Text   string    `json:"text"`
@@ -62,14 +62,27 @@ func fetchArticle(c *gin.Context) {
 		return
 	}
 
-	var article articleDB
-	err = db.First(&article, id).Error
+	var aDb articleDB
+	err = db.First(&aDb, id).Error
 	if err != nil {
 		log.Println(err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status":  http.StatusNotFound,
+			"message": "Article not found",
+		})
+		return
 	}
+
+	article := Article{
+		ID:     aDb.ID,
+		Title:  aDb.Title,
+		Text:   aDb.Text,
+		Author: aDb.Author,
+		Date:   aDb.Date,
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":  http.StatusOK,
 		"article": article,
-		"id":      id,
 	})
 }
