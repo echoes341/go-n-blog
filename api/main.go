@@ -20,17 +20,16 @@ func init() {
 	if err != nil {
 		log.Panicln("Database connection failed")
 	}
-	defer db.Close()
 
 	db.AutoMigrate(&articleDB{})
 }
 
 type articleDB struct {
 	gorm.Model
-	Title  string    `json:"title"`
-	Author string    `json:"author"`
-	Text   string    `json:"text"`
-	Date   time.Time `json:"date"`
+	Title  string
+	Author string
+	Text   string
+	Date   time.Time
 }
 
 // Article is article struct
@@ -63,8 +62,11 @@ func fetchArticle(c *gin.Context) {
 		return
 	}
 
-	article := articleDB{}
-	db.First(&article)
+	var article articleDB
+	err = db.First(&article, id).Error
+	if err != nil {
+		log.Println(err)
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"status":  http.StatusOK,
 		"article": article,
