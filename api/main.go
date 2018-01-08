@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -22,23 +21,7 @@ func init() {
 	}
 
 	db.AutoMigrate(&articleDB{})
-}
-
-type articleDB struct {
-	gorm.Model
-	Title  string
-	Author string
-	Text   string
-	Date   time.Time
-}
-
-// Article is article struct
-type Article struct {
-	ID     uint      `json:"id"`
-	Title  string    `json:"title"`
-	Author string    `json:"author"`
-	Text   string    `json:"text"`
-	Date   time.Time `json:"date"`
+	db.AutoMigrate(&commentDB{})
 }
 
 func main() {
@@ -81,8 +64,19 @@ func fetchArticle(c *gin.Context) {
 		Date:   aDb.Date,
 	}
 
+	commentsNum, err := getCommentCount(article.ID)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  http.StatusInternalServerError,
+			"message": "Internal server error. Impossible to get comments count.",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"status":  http.StatusOK,
-		"article": article,
+		"status":       http.StatusOK,
+		"article":      article,
+		"comments_num": commentsNum,
 	})
 }
