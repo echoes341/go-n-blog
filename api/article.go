@@ -22,3 +22,18 @@ type Article struct {
 	Text   string    `json:"text"`
 	Date   time.Time `json:"date"`
 }
+
+func getArticle(id int) (*Article, error) {
+	var aDb articleDB
+	err := db.First(&aDb, id).Error
+
+	article := Article{
+		ID:     aDb.ID,
+		Title:  aDb.Title,
+		Text:   aDb.Text,
+		Author: aDb.Author,
+		Date:   aDb.Date,
+	}
+
+	return &article, err
+}
