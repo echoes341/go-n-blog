@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -23,7 +24,7 @@ type Comment struct {
 	Content string    `json:"content"`
 }
 
-func getCommentCount(IDArt uint) (int, error) {
+func getCommentCount(IDArt int) (int, error) {
 	i := 0
 	// comments := []commentDB{}
 	// find all the comments of that givent article
@@ -31,4 +32,25 @@ func getCommentCount(IDArt uint) (int, error) {
 
 	// count all the records
 	return i, err
+}
+
+func getComments(IDArt int) ([]Comment, error) {
+	var c []Comment
+	var csDB []commentDB
+
+	err := db.Find(&csDB, "id_art = ?", IDArt).Error
+	fmt.Println(csDB)
+	if err != nil {
+		return c, err
+	}
+	for _, v := range csDB {
+		c = append(c, Comment{
+			ID:      v.ID,
+			IDArt:   v.IDArt,
+			IDUser:  v.IDUser,
+			Date:    v.Date,
+			Content: v.Content,
+		})
+	}
+	return c, nil
 }
