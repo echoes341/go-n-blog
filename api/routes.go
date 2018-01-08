@@ -8,7 +8,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func fetchArticle(c *gin.Context) {
+func defineRoutes(router *gin.Engine) {
+	v1 := router.Group("/api/gonblog")
+	{
+		v1.GET("/article/:id", fetchArt)
+		v1.GET("/article/:id/like", fetchArtLikes)
+		v1.GET("/article/:id/like/isliked/:userid", fetchArtIsLiked)
+		v1.GET("/article/:id/comments", fetchArtComments)
+	}
+}
+
+func fetchArt(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
@@ -29,19 +39,14 @@ func fetchArticle(c *gin.Context) {
 		return
 	}
 
-	commentsNum, err := getCommentCount(article.ID)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"status":  http.StatusInternalServerError,
-			"message": "Internal server error. Impossible to get comments count.",
-		})
-		return
-	}
-
 	c.JSON(http.StatusOK, gin.H{
-		"status":       http.StatusOK,
-		"article":      article,
-		"comments_num": commentsNum,
+		"status":  http.StatusOK,
+		"article": article,
 	})
 }
+
+func fetchArtLikes(c *gin.Context) {}
+
+func fetchArtComments(c *gin.Context) {}
+
+func fetchArtIsLiked(c *gin.Context) {}

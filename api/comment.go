@@ -17,8 +17,8 @@ type commentDB struct {
 // Comment is comment model struct
 type Comment struct {
 	ID      uint      `json:"id"`
-	IDArt   uint      `json:"idArt"`
-	IDUser  uint      `json:"idUser"`
+	IDArt   uint      `json:"id_art"`
+	IDUser  uint      `json:"id_user"`
 	Date    time.Time `json:"date"`
 	Content string    `json:"content"`
 }

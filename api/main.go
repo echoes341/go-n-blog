@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"github.com/gin-gonic/contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -20,14 +21,12 @@ func init() {
 
 	db.AutoMigrate(&articleDB{})
 	db.AutoMigrate(&commentDB{})
+	db.AutoMigrate(&likeDB{})
 }
 
 func main() {
 	router := gin.Default()
-
-	v1 := router.Group("/api/gonblog")
-	{
-		v1.GET("/:id", fetchArticle)
-	}
+	router.Use(gzip.Gzip(gzip.DefaultCompression))
+	defineRoutes(router)
 	router.Run(":8081")
 }
