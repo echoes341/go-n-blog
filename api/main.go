@@ -2,7 +2,9 @@ package main
 
 import (
 	"log"
+	"time"
 
+	"github.com/gin-contrib/cache/persistence"
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -26,7 +28,9 @@ func init() {
 
 func main() {
 	router := gin.Default()
+	store := persistence.NewInMemoryStore(3 * time.Minute)
 	router.Use(gzip.Gzip(gzip.DefaultCompression))
+	router.Use(Cache(store))
 	defineRoutes(router)
 	router.Run(":8081")
 }
