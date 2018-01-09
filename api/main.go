@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/gin-gonic/contrib/gzip"
+	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
