@@ -10,7 +10,6 @@ import (
 
 func defineRoutes(router *gin.Engine) {
 	v1 := router.Group("/api/gonblog")
-
 	{
 		v1.GET("/article/:id", fetchArt)
 		v1.GET("/article/:id/like", fetchArtLikes)
