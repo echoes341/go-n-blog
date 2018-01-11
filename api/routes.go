@@ -5,112 +5,74 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gin-gonic/gin"
+	"github.com/julienschmidt/httprouter"
 )
 
-func defineRoutes(router *gin.Engine) {
-	v1 := router.Group("/api/gonblog")
-	{
-		v1.GET("/article/:id", fetchArt)
-		v1.GET("/article/:id/like", fetchArtLikes)
-		v1.GET("/article/:id/comments", fetchArtComments)
-	}
+func defineRoutes(router *httprouter.Router) {
+	router.GET("/article/:id", fetchArt)
+	router.GET("/article/:id/likes", fetchArtLikes)
+	router.GET("/article/:id/comments", fetchArtComments)
 }
 
-func fetchArt(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+func fetchArt(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	id, err := strconv.Atoi(p.ByName("id"))
 
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  http.StatusNotFound,
-			"message": "ID not valid",
-		})
+		sendJSON("ID not valid", http.StatusNotFound, w, r)
 		return
 	}
 
 	article, err := getArticle(id)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  http.StatusNotFound,
-			"message": "Article not found",
-		})
+		sendJSON("Article not found", http.StatusNotFound, w, r)
 		return
 	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"status": http.StatusOK,
-		"data":   article,
-	})
+	sendJSON(article, http.StatusOK, w, r)
 }
 
-func fetchArtComments(c *gin.Context) {
-	IDArt, err := strconv.Atoi(c.Param("id"))
+func fetchArtComments(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	IDArt, err := strconv.Atoi(p.ByName("id"))
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  http.StatusNotFound,
-			"message": "ID not valid",
-		})
+		sendJSON("ID not valid", http.StatusNotFound, w, r)
 		return
 	}
 
 	comments, err := getComments(IDArt)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"status":  http.StatusInternalServerError,
-			"message": "Comments not found",
-		})
+		sendJSON("Comments not found", http.StatusInternalServerError, w, r)
 		return
 	}
 
 	if len(comments) == 0 {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  http.StatusNotFound,
-			"message": "Comments not found",
-		})
+
+		sendJSON("Comments not found", http.StatusNotFound, w, r)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"status": http.StatusOK,
-		"data":   comments,
-	})
+	sendJSON(comments, http.StatusOK, w, r)
 }
 
-func fetchArtLikes(c *gin.Context) {
-	IDArt, err := strconv.Atoi(c.Param("id"))
+func fetchArtLikes(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	IDArt, err := strconv.Atoi(p.ByName("id"))
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  http.StatusNotFound,
-			"message": "ID not valid",
-		})
+		sendJSON("ID not valid", http.StatusNotFound, w, r)
 		return
 	}
 
 	likes, err := getLikes(IDArt)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"status":  http.StatusInternalServerError,
-			"message": "Likes not found",
-		})
+		sendJSON("Likes not found", http.StatusInternalServerError, w, r)
 		return
 	}
 
 	if len(likes) == 0 {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  http.StatusNotFound,
-			"message": "Likes not found",
-		})
+		sendJSON("Likes not found", http.StatusNotFound, w, r)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"status": http.StatusOK,
-		"data":   likes,
-	})
+	sendJSON(likes, http.StatusOK, w, r)
 
 }
-
-func fetchArtIsLiked(c *gin.Context) {}

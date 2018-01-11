@@ -2,9 +2,10 @@ package main
 
 import (
 	"log"
+	"net/http"
 
-	"github.com/gin-contrib/gzip"
-	"github.com/gin-gonic/gin"
+	"github.com/julienschmidt/httprouter"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
@@ -25,9 +26,7 @@ func init() {
 }
 
 func main() {
-	router := gin.Default()
-
-	router.Use(gzip.Gzip(gzip.DefaultCompression))
-	defineRoutes(router)
-	router.Run(":8081")
+	mux := httprouter.New()
+	defineRoutes(mux)
+	http.ListenAndServe(":8080", mux)
 }
