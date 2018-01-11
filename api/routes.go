@@ -10,8 +10,8 @@ import (
 
 func defineRoutes(router *httprouter.Router) {
 	router.GET("/article/:id", gzipMdl(fetchArt))
-	router.GET("/article/:id/likes", fetchArtLikes)
-	router.GET("/article/:id/comments", fetchArtComments)
+	router.GET("/article/:id/likes", gzipMdl(fetchArtLikes))
+	router.GET("/article/:id/comments", gzipMdl(fetchArtComments))
 }
 
 func fetchArt(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
