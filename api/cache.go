@@ -18,7 +18,8 @@ var cHead *c.Cache
 var cBody *c.Cache
 
 func newCache() {
-	cache = c.New(expiration, 2*expiration)
+	cHead = c.New(expiration, 2*expiration)
+	cBody = c.New(expiration, 2*expiration)
 }
 
 func cacheMdl(fn httprouter.Handle) httprouter.Handle {
