@@ -9,7 +9,7 @@ import (
 )
 
 func defineRoutes(router *httprouter.Router) {
-	router.GET("/article/:id", fetchArt)
+	router.GET("/article/:id", gzipMdl(fetchArt))
 	router.GET("/article/:id/likes", fetchArtLikes)
 	router.GET("/article/:id/comments", fetchArtComments)
 }
