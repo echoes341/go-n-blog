@@ -40,6 +40,16 @@ func getArticle(id int) (*Article, error) {
 }
 
 func getArticleCountByYM() map[int]map[int]int {
+	rows, err := db.Table("article_dbs").Select("YEAR(date) as year, MONTH(date) as month, COUNT(*) as cnt").Group("YEAR(date), MONTH(date)").Rows()
+	if err != nil {
+		log.Panicln(err)
+	}
+	for rows.Next() {
+		var year, month, count int
+		rows.Scan(&year, &month, &count)
+		log.Printf("year: %d  month: %d  count: %d", year, month, count)
+	}
+
 	result := map[int]map[int]int{}
 	result[2017] = make(map[int]int)
 	result[2017][9] = 2
