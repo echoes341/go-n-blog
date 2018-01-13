@@ -44,21 +44,24 @@ func getArticleCountByYM() map[int]map[int]int {
 	if err != nil {
 		log.Panicln(err)
 	}
+	result := map[int]map[int]int{}
 	for rows.Next() {
 		var year, month, count int
 		rows.Scan(&year, &month, &count)
-		log.Printf("year: %d  month: %d  count: %d", year, month, count)
-	}
+		month-- // js date compatibility: months start from 0
 
-	result := map[int]map[int]int{}
-	result[2017] = make(map[int]int)
-	result[2017][9] = 2
-	_, ok := result[2016]
-	log.Printf("%v", ok)
-	for y, mMap := range result {
+		// log.Printf("year: %d  month: %d  count: %d", year, month, count)
+		if _, ok := result[year]; !ok { // if map for that year is not initialised
+			result[year] = make(map[int]int)
+		}
+		result[year][month] = count
+
+	}
+	// debug
+	/*for y, mMap := range result {
 		for m, c := range mMap {
 			log.Printf("%d %d %d", y, m, c)
 		}
-	}
+	}*/
 	return result
 }

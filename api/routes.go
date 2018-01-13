@@ -14,7 +14,7 @@ func defineRoutes(router *httprouter.Router) {
 	router.GET("/article/:id", gzipMdl(cacheMdl(fetchArt)))
 	router.GET("/article/:id/likes", gzipMdl(cacheMdl(fetchArtLikes)))
 	router.GET("/article/:id/comments", gzipMdl(cacheMdl(fetchArtComments)))
-	router.GET("/articles/count", countArticles)
+	router.GET("/articles/count", gzipMdl(cacheMdl(countArticles)))
 	router.GET("/test/cache/date", cacheMdl(dateTest))
 }
 
