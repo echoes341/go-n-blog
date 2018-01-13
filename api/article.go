@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -36,4 +37,18 @@ func getArticle(id int) (*Article, error) {
 	}
 
 	return &article, err
+}
+
+func getArticleCountByYM() map[int]map[int]int {
+	result := map[int]map[int]int{}
+	result[2017] = make(map[int]int)
+	result[2017][9] = 2
+	_, ok := result[2016]
+	log.Printf("%v", ok)
+	for y, mMap := range result {
+		for m, c := range mMap {
+			log.Printf("%d %d %d", y, m, c)
+		}
+	}
+	return result
 }
