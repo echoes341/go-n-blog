@@ -15,6 +15,8 @@ func defineRoutes(router *httprouter.Router) {
 	router.GET("/article/:id/likes", gzipMdl(cacheMdl(fetchArtLikes)))
 	router.GET("/article/:id/comments", gzipMdl(cacheMdl(fetchArtComments)))
 	router.GET("/articles/count", gzipMdl(cacheMdl(countArticles)))
+	router.GET("/articles/list", gzipMdl(fetchArticleList))
+	router.GET("/articles/list/:year/:month/:day", fetchArticleList)
 	router.GET("/test/cache/date", cacheMdl(dateTest))
 }
 
@@ -89,4 +91,48 @@ func dateTest(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 func countArticles(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	count := getArticleCountByYM()
 	sendJSON(count, http.StatusOK, w, r)
+}
+
+func fetchArticleList(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	// by get params:
+	// - n: number of articles to fetch (max 10), default 5
+	// - likes: {true/false} count likes for article
+	// - comments: {true/false} count comments for article
+
+	// by httrouter params
+	// year, month, day
+
+	// prototype
+	answer := []map[string]interface{}{}
+	/*
+		single := map[string]interface{}{}
+		single["likes"] = 2
+		single["comments"] = 3
+		single["article"] = Article{}
+		answer = append(answer, single)
+		single = map[string]interface{}{} // reset map!
+		single["likes"] = 4
+		single["comments"] = 5
+		single["article"] = Article{}
+	*/
+	// get parameters handling
+
+	n := 5
+	nPar, err := strconv.Atoi(r.FormValue("n"))
+	if err == nil && n > 0 && n < 10 { //if n is too great, fall to default
+		n = nPar
+	}
+
+	likes := r.FormValue("likes") == "true"
+	comments := r.FormValue("comments") == "true"
+	log.Printf("n: %d l: %v c: %v", n, likes, comments)
+
+	date := time.Now()
+	xa := getArticles(n, date)
+	for _, article := range xa {
+		single := map[string]interface{}{}
+		single["article"] = article
+		answer = append(answer, single)
+	}
+	sendJSON(answer, http.StatusOK, w, r)
 }
