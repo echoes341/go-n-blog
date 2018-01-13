@@ -1,17 +1,20 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/julienschmidt/httprouter"
 )
 
 func defineRoutes(router *httprouter.Router) {
-	router.GET("/article/:id", gzipMdl(fetchArt))
-	router.GET("/article/:id/likes", gzipMdl(fetchArtLikes))
-	router.GET("/article/:id/comments", gzipMdl(fetchArtComments))
+	router.GET("/article/:id", gzipMdl(cacheMdl(fetchArt)))
+	router.GET("/article/:id/likes", gzipMdl(cacheMdl(fetchArtLikes)))
+	router.GET("/article/:id/comments", gzipMdl(cacheMdl(fetchArtComments)))
+	router.GET("/test/cache/date", cacheMdl(dateTest))
 }
 
 func fetchArt(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -28,6 +31,7 @@ func fetchArt(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		sendJSON("Article not found", http.StatusNotFound, w, r)
 		return
 	}
+
 	sendJSON(article, http.StatusOK, w, r)
 }
 
@@ -75,4 +79,8 @@ func fetchArtLikes(w http.ResponseWriter, r *http.Request, p httprouter.Params) 
 
 	sendJSON(likes, http.StatusOK, w, r)
 
+}
+
+func dateTest(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	fmt.Fprintf(w, "Time now is %d", time.Now().UnixNano())
 }

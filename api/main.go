@@ -27,6 +27,7 @@ func init() {
 
 func main() {
 	mux := httprouter.New()
+	newCache()
 	defineRoutes(mux)
 	http.ListenAndServe(":8080", mux)
 }
