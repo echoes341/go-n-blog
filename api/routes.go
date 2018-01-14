@@ -132,6 +132,12 @@ func fetchArticleList(w http.ResponseWriter, r *http.Request, p httprouter.Param
 	for _, article := range xa {
 		single := map[string]interface{}{}
 		single["article"] = article
+		if likes { // get likes count
+			single["likes"] = getLikesCount(article.ID)
+		}
+		if comments {
+			single["comments"] = getCommentCount(article.ID)
+		}
 		answer = append(answer, single)
 	}
 	sendJSON(answer, http.StatusOK, w, r)

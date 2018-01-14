@@ -53,3 +53,9 @@ func getLikes(IDArt int) ([]Like, error) {
 	}
 	return l, nil
 }
+
+func getLikesCount(IDArt uint) int {
+	i := 0
+	db.Find(&[]likeDB{}, "id_art = ?", IDArt).Count(&i)
+	return i
+}

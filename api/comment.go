@@ -24,14 +24,14 @@ type Comment struct {
 	Content string    `json:"content"`
 }
 
-func getCommentCount(IDArt int) (int, error) {
+func getCommentCount(IDArt uint) int {
 	i := 0
 	// comments := []commentDB{}
 	// find all the comments of that givent article
-	err := db.Find(&[]commentDB{}, "id_art = ?", IDArt).Count(&i).Error
+	db.Find(&[]commentDB{}, "id_art = ?", IDArt).Count(&i)
 
 	// count all the records
-	return i, err
+	return i
 }
 
 func getComments(IDArt int) ([]Comment, error) {
