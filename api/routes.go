@@ -129,14 +129,14 @@ func fetchArticleList(w http.ResponseWriter, r *http.Request, p httprouter.Param
 
 	date := time.Now()
 	xa := getArticles(n, date)
-	for _, article := range xa {
+	for _, ar := range xa {
 		single := map[string]interface{}{}
-		single["article"] = article
+		single["article"] = ar
 		if likes { // get likes count
-			single["likes"] = getLikesCount(article.ID)
+			single["likes"] = getLikesCount(ar.ID)
 		}
 		if comments {
-			single["comments"] = getCommentCount(article.ID)
+			single["comments"] = getCommentCount(ar.ID)
 		}
 		answer = append(answer, single)
 	}

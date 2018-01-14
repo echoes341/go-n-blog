@@ -56,6 +56,6 @@ func getLikes(IDArt int) ([]Like, error) {
 
 func getLikesCount(IDArt uint) int {
 	i := 0
-	db.Find(&[]likeDB{}, "id_art = ?", IDArt).Count(&i)
+	db.Where("id_art = ?", IDArt).Find(&[]likeDB{}).Count(&i)
 	return i
 }

@@ -69,7 +69,7 @@ func getArticleCountByYM() map[int]map[int]int {
 func getArticles(n int, date time.Time) []Article {
 	a := []articleDB{}
 	// fetch n first articles in descending order
-	db.Find(&a, "date <= ?", date).Order("date DESC").Limit(5)
+	db.Where("date <= ?", date).Order("date DESC").Limit(n).Find(&a)
 	xa := []Article{}
 	for _, aDb := range a {
 		article := Article{

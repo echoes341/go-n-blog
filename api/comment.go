@@ -26,11 +26,8 @@ type Comment struct {
 
 func getCommentCount(IDArt uint) int {
 	i := 0
-	// comments := []commentDB{}
-	// find all the comments of that givent article
-	db.Find(&[]commentDB{}, "id_art = ?", IDArt).Count(&i)
-
 	// count all the records
+	db.Where("id_art = ?", IDArt).Find(&[]commentDB{}).Count(&i)
 	return i
 }
 
