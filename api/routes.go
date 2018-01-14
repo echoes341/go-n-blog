@@ -16,7 +16,9 @@ func defineRoutes(router *httprouter.Router) {
 	router.GET("/article/:id/comments", gzipMdl(cacheMdl(fetchArtComments)))
 	router.GET("/articles/count", gzipMdl(cacheMdl(countArticles)))
 	router.GET("/articles/list", gzipMdl(fetchArticleList))
-	router.GET("/articles/list/:year/:month/:day", fetchArticleList)
+	router.GET("/articles/list/:year", gzipMdl(fetchArticleList))
+	router.GET("/articles/list/:year/:month", gzipMdl(fetchArticleList))
+	router.GET("/articles/list/:year/:month/:day", gzipMdl(fetchArticleList))
 	router.GET("/test/cache/date", cacheMdl(dateTest))
 }
 
@@ -102,21 +104,39 @@ func fetchArticleList(w http.ResponseWriter, r *http.Request, p httprouter.Param
 	// by httrouter params
 	// year, month, day
 
-	// prototype
 	answer := []map[string]interface{}{}
-	/*
-		single := map[string]interface{}{}
-		single["likes"] = 2
-		single["comments"] = 3
-		single["article"] = Article{}
-		answer = append(answer, single)
-		single = map[string]interface{}{} // reset map!
-		single["likes"] = 4
-		single["comments"] = 5
-		single["article"] = Article{}
-	*/
-	// get parameters handling
+	var date time.Time
 
+	year, err := strconv.Atoi(p.ByName("year"))
+	if err != nil {
+		// year it's unreadable
+		date = time.Now()
+	} else {
+		month, err := strconv.Atoi(p.ByName("month"))
+		if err != nil {
+			// month ureadable, default
+			month = 12 // December
+		} else {
+			// dates are in input in js format
+			// so month starts from 0
+			// but go internal dates start from 1
+			// so we need to increment the input
+			month++
+		}
+		day, err := strconv.Atoi(p.ByName("day"))
+		if err != nil {
+			// day readable, default
+			// from godoc.org/time
+			// The month, day, hour, min, sec, and nsec values may be outside their usual ranges
+			// and will be normalized during the conversion. For example, October 32 converts to November 1.
+			month++
+			day = 1
+		}
+		// set date with given inputsex
+		date = time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.Local)
+	}
+
+	// get parameters handling
 	n := 5
 	nPar, err := strconv.Atoi(r.FormValue("n"))
 	if err == nil && n > 0 && n < 10 { //if n is too great, fall to default
@@ -125,9 +145,7 @@ func fetchArticleList(w http.ResponseWriter, r *http.Request, p httprouter.Param
 
 	likes := r.FormValue("likes") == "true"
 	comments := r.FormValue("comments") == "true"
-	log.Printf("n: %d l: %v c: %v", n, likes, comments)
 
-	date := time.Now()
 	xa := getArticles(n, date)
 	for _, ar := range xa {
 		single := map[string]interface{}{}
@@ -140,5 +158,9 @@ func fetchArticleList(w http.ResponseWriter, r *http.Request, p httprouter.Param
 		}
 		answer = append(answer, single)
 	}
-	sendJSON(answer, http.StatusOK, w, r)
+	if len(answer) == 0 {
+		sendJSON(answer, http.StatusNotFound, w, r)
+	} else {
+		sendJSON(answer, http.StatusOK, w, r)
+	}
 }
