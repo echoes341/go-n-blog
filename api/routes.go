@@ -32,63 +32,63 @@ func fetchArt(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	id, err := strconv.Atoi(p.ByName("id"))
 
 	if err != nil {
-		sendJSON("ID not valid", http.StatusNotFound, w, r)
+		sendJSON("ID not valid", http.StatusNotFound, w)
 		return
 	}
 
 	article, err := getArticle(id)
 	if err != nil {
 		log.Println(err)
-		sendJSON("Article not found", http.StatusNotFound, w, r)
+		sendJSON("Article not found", http.StatusNotFound, w)
 		return
 	}
 
-	sendJSON(article, http.StatusOK, w, r)
+	sendJSON(article, http.StatusOK, w)
 }
 
 func fetchArtComments(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	IDArt, err := strconv.Atoi(p.ByName("id"))
 	if err != nil {
-		sendJSON("ID not valid", http.StatusNotFound, w, r)
+		sendJSON("ID not valid", http.StatusNotFound, w)
 		return
 	}
 
 	comments, err := getComments(IDArt)
 	if err != nil {
 		log.Println(err)
-		sendJSON("Comments not found", http.StatusInternalServerError, w, r)
+		sendJSON("Comments not found", http.StatusInternalServerError, w)
 		return
 	}
 
 	if len(comments) == 0 {
 
-		sendJSON("Comments not found", http.StatusNotFound, w, r)
+		sendJSON("Comments not found", http.StatusNotFound, w)
 		return
 	}
 
-	sendJSON(comments, http.StatusOK, w, r)
+	sendJSON(comments, http.StatusOK, w)
 }
 
 func fetchArtLikes(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	IDArt, err := strconv.Atoi(p.ByName("id"))
 	if err != nil {
-		sendJSON("ID not valid", http.StatusNotFound, w, r)
+		sendJSON("ID not valid", http.StatusNotFound, w)
 		return
 	}
 
 	likes, err := getLikes(IDArt)
 	if err != nil {
 		log.Println(err)
-		sendJSON("Likes not found", http.StatusInternalServerError, w, r)
+		sendJSON("Likes not found", http.StatusInternalServerError, w)
 		return
 	}
 
 	if len(likes) == 0 {
-		sendJSON("Likes not found", http.StatusNotFound, w, r)
+		sendJSON("Likes not found", http.StatusNotFound, w)
 		return
 	}
 
-	sendJSON(likes, http.StatusOK, w, r)
+	sendJSON(likes, http.StatusOK, w)
 
 }
 
@@ -98,7 +98,7 @@ func dateTest(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
 func countArticles(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	count := getArticleCountByYM()
-	sendJSON(count, http.StatusOK, w, r)
+	sendJSON(count, http.StatusOK, w)
 }
 
 func fetchArticleList(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -165,9 +165,9 @@ func fetchArticleList(w http.ResponseWriter, r *http.Request, p httprouter.Param
 		answer = append(answer, single)
 	}
 	if len(answer) == 0 {
-		sendJSON(answer, http.StatusNotFound, w, r)
+		sendJSON(answer, http.StatusNotFound, w)
 	} else {
-		sendJSON(answer, http.StatusOK, w, r)
+		sendJSON(answer, http.StatusOK, w)
 	}
 }
 
@@ -178,51 +178,46 @@ func login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	auth := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
 
 	if len(auth) != 2 {
-		log.Printf("LOGIN Forbidden")
-		sendJSON("Bad Format", http.StatusUnauthorized, w, r)
+		unauthorized(badReq, w)
 		return
 	}
 
 	b64, err := base64.StdEncoding.DecodeString(auth[1])
 	if err != nil {
-		log.Printf("LOGIN Forbidden")
-		sendJSON("Bad Format", http.StatusUnauthorized, w, r)
+		unauthorized(badReq, w)
 		return
 	}
 
 	authDatas := strings.SplitN(string(b64), ":", 2)
 	if len(authDatas) != 2 {
-		log.Printf("LOGIN Forbidden")
-		sendJSON("Bad Format", http.StatusUnauthorized, w, r)
+		unauthorized(badReq, w)
 		return
 	}
 
 	user := authDatas[0]
 	password := authDatas[1]
 	if user == "" || password == "" {
-		sendJSON(nil, http.StatusBadRequest, w, r)
+		unauthorized(badReq, w)
 		return
 	}
 	/* SIGNUP
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		log.Printf("[FATAL] bcrypt login: %s", err)
-		sendJSON(nil, http.StatusInternalServerError, w, r)
+		sendJSON(nil, http.StatusInternalServerError, w)
 		return
 	}*/
 	// test
 	authHash := `$2a$10$zEp78PpK750GT5XuQg9KMOnrsZPiI6N7dGm1A6W2I.W7LjetTm8L2`
 	authUser := `test@test.com`
 	if authUser != user {
-		log.Printf("LOGIN Forbidden")
-		sendJSON("Username and/or password do not match", http.StatusUnauthorized, w, r)
+		unauthorized(notAuth, w)
 		return
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(authHash), []byte(password))
 	if err != nil {
-		log.Printf("LOGIN Forbidden")
-		sendJSON("Username and/or password do not match", http.StatusUnauthorized, w, r)
+		unauthorized(notAuth, w)
 		return
 	}
-	sendJSON("AUTH OK. Welcome.", http.StatusOK, w, r)
+	sendJSON("AUTH OK. Welcome.", http.StatusOK, w)
 }

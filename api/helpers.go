@@ -17,7 +17,7 @@ type answer struct {
 }
 
 // Send data as standard JSON (answer struct)
-func sendJSON(msg interface{}, status int, w http.ResponseWriter, r *http.Request) {
+func sendJSON(msg interface{}, status int, w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	a := answer{
