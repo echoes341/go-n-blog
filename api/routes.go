@@ -1,10 +1,12 @@
 package main
 
 import (
+	"encoding/base64"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -170,22 +172,57 @@ func fetchArticleList(w http.ResponseWriter, r *http.Request, p httprouter.Param
 }
 
 func login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	// GET params user and password
-	user := r.FormValue("user")
-	password := r.FormValue("password")
 
+	// https://gist.github.com/elithrar/9146306
+	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication
+	auth := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
+
+	if len(auth) != 2 {
+		log.Printf("LOGIN Forbidden")
+		sendJSON("Bad Format", http.StatusUnauthorized, w, r)
+		return
+	}
+
+	b64, err := base64.StdEncoding.DecodeString(auth[1])
+	if err != nil {
+		log.Printf("LOGIN Forbidden")
+		sendJSON("Bad Format", http.StatusUnauthorized, w, r)
+		return
+	}
+
+	authDatas := strings.SplitN(string(b64), ":", 2)
+	if len(authDatas) != 2 {
+		log.Printf("LOGIN Forbidden")
+		sendJSON("Bad Format", http.StatusUnauthorized, w, r)
+		return
+	}
+
+	user := authDatas[0]
+	password := authDatas[1]
 	if user == "" || password == "" {
 		sendJSON(nil, http.StatusBadRequest, w, r)
 		return
 	}
-
+	/* SIGNUP
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		log.Printf("[FATAL] bcrypt login: %s", err)
 		sendJSON(nil, http.StatusInternalServerError, w, r)
 		return
+	}*/
+	// test
+	authHash := `$2a$10$zEp78PpK750GT5XuQg9KMOnrsZPiI6N7dGm1A6W2I.W7LjetTm8L2`
+	authUser := `test@test.com`
+	if authUser != user {
+		log.Printf("LOGIN Forbidden")
+		sendJSON("Username and/or password do not match", http.StatusUnauthorized, w, r)
+		return
 	}
-
-	log.Printf("user: %s\n", user)
-	log.Printf("pwd hash: %s", hash)
+	err = bcrypt.CompareHashAndPassword([]byte(authHash), []byte(password))
+	if err != nil {
+		log.Printf("LOGIN Forbidden")
+		sendJSON("Username and/or password do not match", http.StatusUnauthorized, w, r)
+		return
+	}
+	sendJSON("AUTH OK. Welcome.", http.StatusOK, w, r)
 }
