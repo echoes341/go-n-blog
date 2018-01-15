@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"time"
 
+	"golang.org/x/crypto/bcrypt"
+
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -20,6 +22,8 @@ func defineRoutes(router *httprouter.Router) {
 	router.GET("/articles/list/:year/:month", gzipMdl(fetchArticleList))
 	router.GET("/articles/list/:year/:month/:day", gzipMdl(fetchArticleList))
 	router.GET("/test/cache/date", cacheMdl(dateTest))
+
+	router.GET("/login", login)
 }
 
 func fetchArt(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -163,4 +167,25 @@ func fetchArticleList(w http.ResponseWriter, r *http.Request, p httprouter.Param
 	} else {
 		sendJSON(answer, http.StatusOK, w, r)
 	}
+}
+
+func login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	// GET params user and password
+	user := r.FormValue("user")
+	password := r.FormValue("password")
+
+	if user == "" || password == "" {
+		sendJSON(nil, http.StatusBadRequest, w, r)
+		return
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		log.Printf("[FATAL] bcrypt login: %s", err)
+		sendJSON(nil, http.StatusInternalServerError, w, r)
+		return
+	}
+
+	log.Printf("user: %s\n", user)
+	log.Printf("pwd hash: %s", hash)
 }
