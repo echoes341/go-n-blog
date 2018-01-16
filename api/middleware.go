@@ -4,20 +4,22 @@ import (
 	"net/http"
 )
 
-// GET middleware: gzip enabled
-
-func gzEnable(r getInterface) *gzGroup {
-	return &gzGroup{r}
-}
-
-type gzGroup struct {
-	getInterface
-}
-
+// useGET: generic middleware handler for GET methods
 type getInterface interface {
 	GET(string, http.HandlerFunc)
 }
 
-func (g *gzGroup) GET(path string, fn http.HandlerFunc) {
-	g.getInterface.GET(path, gzipMdl(fn))
+type middleFunc func(http.HandlerFunc) http.HandlerFunc
+
+func useGET(r getInterface, fn middleFunc) *middleWare {
+	return &middleWare{fn, r}
+}
+
+type middleWare struct {
+	fn middleFunc
+	getInterface
+}
+
+func (m *middleWare) GET(path string, fn http.HandlerFunc) {
+	m.getInterface.GET(path, m.fn(fn))
 }

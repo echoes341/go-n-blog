@@ -17,7 +17,7 @@ import (
 func defineRoutes(router *httptreemux.ContextMux) {
 
 	// Single article group -- gzip middleware
-	a := gzEnable(router.NewGroup("/article"))
+	a := useGET(router.NewGroup("/article"), gzipMdl)
 	{
 		a.GET("/:id", cacheMdl(fetchArt))
 		a.GET("/:id/likes", cacheMdl(fetchArtLikes))
@@ -25,7 +25,7 @@ func defineRoutes(router *httptreemux.ContextMux) {
 	}
 
 	// Multiple articles group -- gzip middleware
-	xa := gzEnable(router.NewGroup("/articles"))
+	xa := useGET(router.NewGroup("/articles"), gzipMdl)
 	{
 		xa.GET("/count", cacheMdl(countArticles))
 		xa.GET("/list", fetchArticleList)
