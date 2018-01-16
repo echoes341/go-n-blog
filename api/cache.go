@@ -11,8 +11,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/julienschmidt/httprouter"
-
 	c "github.com/patrickmn/go-cache"
 )
 
@@ -57,13 +55,13 @@ func newCache() {
 	cBody = c.New(expiration, 2*expiration)
 }
 
-func cacheMdl(fn httprouter.Handle) httprouter.Handle {
+func cacheMdl(fn http.HandlerFunc) http.HandlerFunc {
 	// check if the url is in the cache
 	// if yes: call the cache
 	// if not: execute function
 	//         store the value on the cache
 	//         write it on the response
-	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	return func(w http.ResponseWriter, r *http.Request) {
 		u := r.URL.EscapedPath()
 		// check cache
 		if head, hFound := cHead.Get(u); hFound {
@@ -82,7 +80,7 @@ func cacheMdl(fn httprouter.Handle) httprouter.Handle {
 
 			body := bytes.NewBuffer([]byte{})
 			cw := newCachedResponseWriter(body, w)
-			fn(cw, r, p)
+			fn(cw, r)
 
 			h := cw.Header() // pick the header, even if it's already sent
 			cHead.Set(u, h, c.DefaultExpiration)

@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/julienschmidt/httprouter"
+	"github.com/dimfeld/httptreemux"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -26,7 +26,7 @@ func init() {
 }
 
 func main() {
-	mux := httprouter.New()
+	mux := httptreemux.NewContextMux()
 	newCache()
 	defineRoutes(mux)
 	http.ListenAndServe(":8080", mux)

@@ -7,8 +7,6 @@ import (
 	"io"
 	"net/http"
 	"strings"
-
-	"github.com/julienschmidt/httprouter"
 )
 
 type answer struct {
@@ -38,10 +36,10 @@ func (w GzipResponseWriter) Write(b []byte) (int, error) {
 	return w.Writer.Write(b)
 }
 
-func gzipMdl(fn httprouter.Handle) httprouter.Handle {
-	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func gzipMdl(fn http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		if !strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
-			fn(w, r, p)
+			fn(w, r)
 			return
 		}
 		w.Header().Set("Vary", "Accept-Encoding")
@@ -49,6 +47,6 @@ func gzipMdl(fn httprouter.Handle) httprouter.Handle {
 		gz := gzip.NewWriter(w)
 		defer gz.Close()
 		gzr := GzipResponseWriter{Writer: gz, ResponseWriter: w}
-		fn(gzr, r, p)
+		fn(gzr, r)
 	}
 }

@@ -11,25 +11,37 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/julienschmidt/httprouter"
+	"github.com/dimfeld/httptreemux"
 )
 
-func defineRoutes(router *httprouter.Router) {
-	router.GET("/article/:id", gzipMdl(cacheMdl(fetchArt)))
-	router.GET("/article/:id/likes", gzipMdl(cacheMdl(fetchArtLikes)))
-	router.GET("/article/:id/comments", gzipMdl(cacheMdl(fetchArtComments)))
-	router.GET("/articles/count", gzipMdl(cacheMdl(countArticles)))
-	router.GET("/articles/list", gzipMdl(fetchArticleList))
-	router.GET("/articles/list/:year", gzipMdl(fetchArticleList))
-	router.GET("/articles/list/:year/:month", gzipMdl(fetchArticleList))
-	router.GET("/articles/list/:year/:month/:day", gzipMdl(fetchArticleList))
+func defineRoutes(router *httptreemux.ContextMux) {
+
+	// Single article group
+	a := router.NewGroup("/article")
+	{
+		a.GET("/:id", gzipMdl(cacheMdl(fetchArt)))
+		a.GET("/:id/likes", gzipMdl(cacheMdl(fetchArtLikes)))
+		a.GET("/:id/comments", gzipMdl(cacheMdl(fetchArtComments)))
+	}
+
+	// Multiple articles group
+	xa := router.NewGroup("/articles")
+	{
+		xa.GET("/count", gzipMdl(cacheMdl(countArticles)))
+		xa.GET("/list", gzipMdl(fetchArticleList))
+		xa.GET("/list/:year", gzipMdl(fetchArticleList))
+		xa.GET("/list/:year/:month", gzipMdl(fetchArticleList))
+		xa.GET("/list/:year/:month/:day", gzipMdl(fetchArticleList))
+	}
+
 	router.GET("/test/cache/date", cacheMdl(dateTest))
 
 	router.GET("/login", login)
 }
 
-func fetchArt(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	id, err := strconv.Atoi(p.ByName("id"))
+func fetchArt(w http.ResponseWriter, r *http.Request) {
+	p := httptreemux.ContextParams(r.Context())
+	id, err := strconv.Atoi(p["id"])
 
 	if err != nil {
 		sendJSON("ID not valid", http.StatusNotFound, w)
@@ -46,8 +58,9 @@ func fetchArt(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	sendJSON(article, http.StatusOK, w)
 }
 
-func fetchArtComments(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	IDArt, err := strconv.Atoi(p.ByName("id"))
+func fetchArtComments(w http.ResponseWriter, r *http.Request) {
+	p := httptreemux.ContextParams(r.Context())
+	IDArt, err := strconv.Atoi(p["id"])
 	if err != nil {
 		sendJSON("ID not valid", http.StatusNotFound, w)
 		return
@@ -69,8 +82,9 @@ func fetchArtComments(w http.ResponseWriter, r *http.Request, p httprouter.Param
 	sendJSON(comments, http.StatusOK, w)
 }
 
-func fetchArtLikes(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	IDArt, err := strconv.Atoi(p.ByName("id"))
+func fetchArtLikes(w http.ResponseWriter, r *http.Request) {
+	p := httptreemux.ContextParams(r.Context())
+	IDArt, err := strconv.Atoi(p["id"])
 	if err != nil {
 		sendJSON("ID not valid", http.StatusNotFound, w)
 		return
@@ -92,33 +106,34 @@ func fetchArtLikes(w http.ResponseWriter, r *http.Request, p httprouter.Params) 
 
 }
 
-func dateTest(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func dateTest(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Time now is %d", time.Now().UnixNano())
 }
 
-func countArticles(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func countArticles(w http.ResponseWriter, r *http.Request) {
 	count := getArticleCountByYM()
 	sendJSON(count, http.StatusOK, w)
 }
 
-func fetchArticleList(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func fetchArticleList(w http.ResponseWriter, r *http.Request) {
 	// by get params:
 	// - n: number of articles to fetch (max 10), default 5
 	// - likes: {true/false} count likes for article
 	// - comments: {true/false} count comments for article
 
-	// by httrouter params
+	// by htttreemux params
 	// year, month, day
 
+	p := httptreemux.ContextParams(r.Context())
 	answer := []map[string]interface{}{}
 	var date time.Time
 
-	year, err := strconv.Atoi(p.ByName("year"))
+	year, err := strconv.Atoi(p["year"])
 	if err != nil {
 		// year it's unreadable
 		date = time.Now()
 	} else {
-		month, err := strconv.Atoi(p.ByName("month"))
+		month, err := strconv.Atoi(p["month"])
 		if err != nil {
 			// month ureadable, default
 			month = 12 // December
@@ -129,9 +144,9 @@ func fetchArticleList(w http.ResponseWriter, r *http.Request, p httprouter.Param
 			// so we need to increment the input
 			month++
 		}
-		day, err := strconv.Atoi(p.ByName("day"))
+		day, err := strconv.Atoi(p["day"])
 		if err != nil {
-			// day readable, default
+			// day unreadable, default
 			// from godoc.org/time
 			// The month, day, hour, min, sec, and nsec values may be outside their usual ranges
 			// and will be normalized during the conversion. For example, October 32 converts to November 1.
@@ -171,7 +186,7 @@ func fetchArticleList(w http.ResponseWriter, r *http.Request, p httprouter.Param
 	}
 }
 
-func login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func login(w http.ResponseWriter, r *http.Request) {
 
 	// https://gist.github.com/elithrar/9146306
 	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication

@@ -10,6 +10,9 @@ const (
 	notAuth
 )
 
+// https://www.owasp.org/index.php/REST_Security_Cheat_Sheet
+// http://blog.restcase.com/restful-api-authentication-basics/
+
 func unauthorized(status byte, w http.ResponseWriter) {
 	var message string
 	switch status {
