@@ -16,22 +16,22 @@ import (
 
 func defineRoutes(router *httptreemux.ContextMux) {
 
-	// Single article group
-	a := router.NewGroup("/article")
+	// Single article group -- gzip middleware
+	a := gzEnable(router.NewGroup("/article"))
 	{
-		a.GET("/:id", gzipMdl(cacheMdl(fetchArt)))
-		a.GET("/:id/likes", gzipMdl(cacheMdl(fetchArtLikes)))
-		a.GET("/:id/comments", gzipMdl(cacheMdl(fetchArtComments)))
+		a.GET("/:id", cacheMdl(fetchArt))
+		a.GET("/:id/likes", cacheMdl(fetchArtLikes))
+		a.GET("/:id/comments", cacheMdl(fetchArtComments))
 	}
 
-	// Multiple articles group
-	xa := router.NewGroup("/articles")
+	// Multiple articles group -- gzip middleware
+	xa := gzEnable(router.NewGroup("/articles"))
 	{
-		xa.GET("/count", gzipMdl(cacheMdl(countArticles)))
-		xa.GET("/list", gzipMdl(fetchArticleList))
-		xa.GET("/list/:year", gzipMdl(fetchArticleList))
-		xa.GET("/list/:year/:month", gzipMdl(fetchArticleList))
-		xa.GET("/list/:year/:month/:day", gzipMdl(fetchArticleList))
+		xa.GET("/count", cacheMdl(countArticles))
+		xa.GET("/list", fetchArticleList)
+		xa.GET("/list/:year", fetchArticleList)
+		xa.GET("/list/:year/:month", fetchArticleList)
+		xa.GET("/list/:year/:month/:day", fetchArticleList)
 	}
 
 	router.GET("/test/cache/date", cacheMdl(dateTest))
