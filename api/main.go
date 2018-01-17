@@ -20,6 +20,7 @@ func init() {
 		log.Panicln("Database connection failed")
 	}
 
+	db.AutoMigrate(&userDB{})
 	db.AutoMigrate(&articleDB{})
 	db.AutoMigrate(&commentDB{})
 	db.AutoMigrate(&likeDB{})
