@@ -27,10 +27,10 @@ type User struct {
 // match takes a user and a password and check in database if
 // password match. If so, it returns the selected user (jwt empty),
 // otherwise it returns an error and an empty user.
-func match(email, password string) (User, error) {
+func match(user, password string) (User, error) {
 	uDB := userDB{}
 	stdErr := fmt.Errorf("Login error")
-	db.Where("email = ?", email).Find(&uDB)
+	db.Where("email = ?", user).Or("username = ?", user).Find(&uDB)
 	if uDB.ID == 0 {
 		return User{}, stdErr // always return an empty user
 	}
