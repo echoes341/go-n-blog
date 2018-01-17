@@ -9,8 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"golang.org/x/crypto/bcrypt"
-
 	"github.com/dimfeld/httptreemux"
 )
 
@@ -223,16 +221,16 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}*/
 	// test
-	authHash := `$2a$10$zEp78PpK750GT5XuQg9KMOnrsZPiI6N7dGm1A6W2I.W7LjetTm8L2`
-	authUser := `test@test.com`
-	if authUser != user {
+	//authHash := `$2a$10$zEp78PpK750GT5XuQg9KMOnrsZPiI6N7dGm1A6W2I.W7LjetTm8L2`
+	//authUser := `test@test.com`
+	/*if authUser != user {
 		unauthorized(notAuth, w)
 		return
-	}
-	err = bcrypt.CompareHashAndPassword([]byte(authHash), []byte(password))
+	}*/
+	u, err := match(user, password)
 	if err != nil {
 		unauthorized(notAuth, w)
 		return
 	}
-	sendJSON("AUTH OK. Welcome.", http.StatusOK, w)
+	sendJSON(u, http.StatusOK, w)
 }
