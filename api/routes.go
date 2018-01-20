@@ -232,5 +232,10 @@ func login(w http.ResponseWriter, r *http.Request) {
 		unauthorized(notAuth, w)
 		return
 	}
-	sendJSON(u, http.StatusOK, w)
+	token, err := buildJWT(u)
+	if err != nil {
+		sendJSON(nil, http.StatusInternalServerError, w)
+		return
+	}
+	sendJSON(token, http.StatusOK, w)
 }

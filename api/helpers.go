@@ -26,7 +26,7 @@ func sendJSON(msg interface{}, status int, w http.ResponseWriter) {
 	fmt.Fprintf(w, "%s", uj)
 }
 
-// gzip compress as in https://github.com/socialradar/go-gzip-middleware/blob/master/gzip.go
+// GzipResponseWriter gzip compress as in https://github.com/socialradar/go-gzip-middleware/blob/master/gzip.go
 type GzipResponseWriter struct {
 	io.Writer
 	http.ResponseWriter
