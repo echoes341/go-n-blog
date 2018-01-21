@@ -42,11 +42,11 @@ func unauthorized(status byte, w http.ResponseWriter) {
 }
 
 func buildJWT(u User) (string, error) {
-	expiration := time.Now().Add(20 * time.Second)
+	expiration := time.Now().Add(10 * time.Minute)
 	claims := userToken{
 		u,
 		jwt.StandardClaims{
-			ExpiresAt: expiration.UnixNano(),
+			ExpiresAt: expiration.Unix(),
 			Issuer:    "gonblog",
 		},
 	}

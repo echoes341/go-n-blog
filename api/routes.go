@@ -239,8 +239,10 @@ func login(w http.ResponseWriter, r *http.Request) {
 		// second argument is JWT
 		u, err := checkJWT(auth[1])
 		if err != nil {
-			if verification, ok := err.(jwt.ValidationError); ok { //check if we can see the error as a validation one
-				if verification.Errors == jwt.ValidationErrorExpired {
+			log.Printf("%v\n", err)
+			// if strings.Contains(err.Error(), "expired") {
+			if validation, ok := err.(*jwt.ValidationError); ok {
+				if validation.Errors&jwt.ValidationErrorExpired != 0 {
 					unauthorized(jwtExpired, w)
 					return
 				}
