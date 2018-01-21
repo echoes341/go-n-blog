@@ -251,6 +251,8 @@ func login(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		sendJSON("Welcome "+u.Username, http.StatusOK, w)
+	default:
+		unauthorized(badReq, w)
 	}
 
 }
