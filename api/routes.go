@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/dimfeld/httptreemux"
 )
 
@@ -195,47 +196,59 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	b64, err := base64.StdEncoding.DecodeString(auth[1])
-	if err != nil {
-		unauthorized(badReq, w)
-		return
+	switch auth[0] {
+	case "Basic":
+		b64, err := base64.StdEncoding.DecodeString(auth[1])
+		if err != nil {
+			unauthorized(badReq, w)
+			return
+		}
+
+		authDatas := strings.SplitN(string(b64), ":", 2)
+		if len(authDatas) != 2 {
+			unauthorized(badReq, w)
+			return
+		}
+
+		user := authDatas[0]
+		password := authDatas[1]
+		if user == "" || password == "" {
+			unauthorized(badReq, w)
+			return
+		}
+		/* SIGNUP
+		hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+		if err != nil {
+			log.Printf("[FATAL] bcrypt login: %s", err)
+			sendJSON(nil, http.StatusInternalServerError, w)
+			return
+		}*/
+
+		u, err := match(user, password)
+		if err != nil {
+			unauthorized(userPassNotValid, w)
+			return
+		}
+		token, err := buildJWT(u)
+		if err != nil {
+			sendJSON(nil, http.StatusInternalServerError, w)
+			return
+		}
+		sendJSON(token, http.StatusOK, w)
+	case "Bearer":
+		// second argument is JWT
+		u, err := checkJWT(auth[1])
+		if err != nil {
+			if verification, ok := err.(jwt.ValidationError); ok { //check if we can see the error as a validation one
+				if verification.Errors == jwt.ValidationErrorExpired {
+					unauthorized(jwtExpired, w)
+					return
+				}
+			}
+			unauthorized(jwtNotValid, w)
+			return
+		}
+		sendJSON("Welcome "+u.Username, http.StatusOK, w)
 	}
 
-	authDatas := strings.SplitN(string(b64), ":", 2)
-	if len(authDatas) != 2 {
-		unauthorized(badReq, w)
-		return
-	}
-
-	user := authDatas[0]
-	password := authDatas[1]
-	if user == "" || password == "" {
-		unauthorized(badReq, w)
-		return
-	}
-	/* SIGNUP
-	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		log.Printf("[FATAL] bcrypt login: %s", err)
-		sendJSON(nil, http.StatusInternalServerError, w)
-		return
-	}*/
-	// test
-	//authHash := `$2a$10$zEp78PpK750GT5XuQg9KMOnrsZPiI6N7dGm1A6W2I.W7LjetTm8L2`
-	//authUser := `test@test.com`
-	/*if authUser != user {
-		unauthorized(notAuth, w)
-		return
-	}*/
-	u, err := match(user, password)
-	if err != nil {
-		unauthorized(notAuth, w)
-		return
-	}
-	token, err := buildJWT(u)
-	if err != nil {
-		sendJSON(nil, http.StatusInternalServerError, w)
-		return
-	}
-	sendJSON(token, http.StatusOK, w)
 }
