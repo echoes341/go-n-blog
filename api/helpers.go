@@ -1,12 +1,10 @@
 package main
 
 import (
-	"compress/gzip"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 )
 
 type answer struct {
@@ -34,19 +32,4 @@ type GzipResponseWriter struct {
 
 func (w GzipResponseWriter) Write(b []byte) (int, error) {
 	return w.Writer.Write(b)
-}
-
-func gzipMdl(fn http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if !strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
-			fn(w, r)
-			return
-		}
-		w.Header().Set("Vary", "Accept-Encoding")
-		w.Header().Set("Content-Encoding", "gzip")
-		gz := gzip.NewWriter(w)
-		defer gz.Close()
-		gzr := GzipResponseWriter{Writer: gz, ResponseWriter: w}
-		fn(gzr, r)
-	}
 }

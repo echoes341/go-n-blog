@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/jinzhu/gorm"
@@ -13,6 +14,7 @@ type userDB struct {
 	Email      string
 	ProfileURL string
 	PwdHash    []byte
+	IsAdmin    bool
 }
 
 // User is user structure
@@ -21,7 +23,7 @@ type User struct {
 	Username   string `json:"username"`
 	Email      string `json:"email,omitempty"`
 	ProfileURL string `json:"profile_url,omitempty"`
-	JWT        string `json:"jwt,omitempty"`
+	IsAdmin    bool   `json:"is_admin"`
 }
 
 // match takes a user and a password and check in database if
@@ -49,9 +51,24 @@ func match(user, password string) (User, error) {
 		Username:   uDB.Username,
 		Email:      uDB.Email,
 		ProfileURL: uDB.ProfileURL,
-		JWT:        "", // empty
+		IsAdmin:    uDB.IsAdmin,
 	}
 
 	return u, nil
 
+}
+
+type contextKey string
+
+const userContextKey contextKey = "user"
+
+func addUserToContext(ctx context.Context, u *User) context.Context {
+	return context.WithValue(ctx, userContextKey, u)
+}
+
+func userContext(ctx context.Context) *User {
+	if u, ok := ctx.Value(userContextKey).(*User); ok {
+		return u
+	}
+	return &User{}
 }
