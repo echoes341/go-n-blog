@@ -10,7 +10,7 @@ import (
 type articleDB struct {
 	gorm.Model
 	Title  string
-	Author string
+	Author uint
 	Text   string
 	Date   time.Time
 }
@@ -19,7 +19,7 @@ type articleDB struct {
 type Article struct {
 	ID     uint      `json:"id"`
 	Title  string    `json:"title"`
-	Author string    `json:"author"`
+	Author uint      `json:"author"`
 	Text   string    `json:"text"`
 	Date   time.Time `json:"date"`
 }
@@ -72,15 +72,32 @@ func getArticles(n int, date time.Time) []Article {
 	db.Where("date <= ?", date).Order("date DESC").Limit(n).Find(&a)
 	xa := []Article{}
 	for _, aDb := range a {
-		article := Article{
-			ID:     aDb.ID,
-			Title:  aDb.Title,
-			Text:   aDb.Text,
-			Author: aDb.Author,
-			Date:   aDb.Date,
-		}
+		article := fillArticle(aDb)
 		xa = append(xa, article)
 	}
 
 	return xa
+}
+
+func fillArticle(aDb articleDB) Article {
+	return Article{
+		ID:     aDb.ID,
+		Title:  aDb.Title,
+		Text:   aDb.Text,
+		Author: aDb.Author,
+		Date:   aDb.Date,
+	}
+}
+
+func addArticle(title, text string, userID uint, date time.Time) Article {
+	a := articleDB{
+		Author: userID,
+		Date:   date,
+		Text:   text,
+		Title:  title,
+	}
+	db.NewRecord(a)
+	db.Create(&a)
+
+	return fillArticle(a)
 }

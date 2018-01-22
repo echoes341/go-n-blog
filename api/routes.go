@@ -24,7 +24,7 @@ func defineRoutes(router *httptreemux.ContextMux) {
 	// Reserved section
 
 	{
-		a.POST("/", authRequired(addArticle))
+		a.POST("/", authRequired(addArticleRoute))
 	}
 
 	// Multiple articles group -- gzip middleware
@@ -200,9 +200,33 @@ func login(w http.ResponseWriter, r *http.Request) {
 	sendJSON(msg, http.StatusOK, w)
 }
 
-func addArticle(w http.ResponseWriter, r *http.Request) {
+func addArticleRoute(w http.ResponseWriter, r *http.Request) {
 	u := userContext(r.Context())
 	if u.IsAdmin {
+		title := r.FormValue("title")
+		aID, _ := strconv.Atoi(r.FormValue("author"))
+		author := uint(aID)
+		text := r.FormValue("text")
+		dateInt, _ := strconv.Atoi(r.FormValue("date")) // date in unix format
+
+		if title == "" || text == "" {
+			sendJSON("Input not valid", http.StatusBadRequest, w)
+			return
+		}
+		if author == 0 {
+			author = u.ID
+		}
+		var date time.Time
+		if dateInt == 0 { // Error in conversion or parameter empty
+			date = time.Now()
+		} else {
+			date = time.Unix(int64(dateInt), 0)
+		}
+
+		art := addArticle(title, text, author, date)
+		if art.ID == 0 {
+			panic(0)
+		}
 		sendJSON(Article{}, http.StatusCreated, w)
 	} else {
 		sendJSON("You are not admin", http.StatusForbidden, w)
