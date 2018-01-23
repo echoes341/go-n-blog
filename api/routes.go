@@ -207,12 +207,8 @@ func login(w http.ResponseWriter, r *http.Request) {
 }
 
 func addArticleRoute(w http.ResponseWriter, r *http.Request) {
-	//u := userContext(r.Context())
-	u := User{
-		ID:       2,
-		Username: "debug",
-		IsAdmin:  true,
-	}
+	u := userContext(r.Context())
+
 	if u.IsAdmin {
 		title := r.FormValue("title")
 		aID, _ := strconv.Atoi(r.FormValue("author"))
@@ -255,11 +251,7 @@ func editArticle(w http.ResponseWriter, r *http.Request) {
 	// u := userContext(r.Context())
 	// debug: dummy user
 	ctx := r.Context()
-	u := User{
-		ID:       2,
-		Username: "debug",
-		IsAdmin:  true,
-	}
+	u := userContext(ctx)
 	if u.IsAdmin {
 		p := httptreemux.ContextParams(ctx)
 
@@ -289,3 +281,4 @@ func editArticle(w http.ResponseWriter, r *http.Request) {
 		sendJSON("You are not admin", http.StatusForbidden, w)
 	}
 }
+
