@@ -101,3 +101,37 @@ func addArticle(title, text string, userID uint, date time.Time) Article {
 
 	return fillArticle(a)
 }
+
+func updateArticle(id uint, title, text string) Article {
+	// begin transaction
+
+	tx := db.Begin()
+
+	var aDb articleDB
+	err := tx.First(&aDb, id).Error
+	if err != nil {
+		log.Printf("[ART-EDIT]: %s\n", err)
+		log.Printf("[ART-EDIT]: ID: %d\n", id)
+		log.Printf("[ART-EDIT]: Title: %s\n", title)
+		log.Printf("[ART-EDIT]: Text: %s\n", text)
+		tx.Rollback()
+		return Article{}
+	}
+
+	aDb.Title = title
+	aDb.Text = text
+
+	err = tx.Save(&aDb).Error
+	if err != nil {
+		log.Printf("[ART-EDIT]: %s\n", err)
+		log.Printf("[ART-EDIT]: ID: %d\n", id)
+		log.Printf("[ART-EDIT]: Title: %s\n", title)
+		log.Printf("[ART-EDIT]: Text: %s\n", text)
+		tx.Rollback()
+		return Article{}
+	}
+
+	// commit transaction
+	tx.Commit()
+	return fillArticle(aDb)
+}

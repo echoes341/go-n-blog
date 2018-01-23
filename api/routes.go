@@ -10,10 +10,15 @@ import (
 	"github.com/dimfeld/httptreemux"
 )
 
+const (
+	articleGroup  = "/article"
+	articlesGroup = "/articles"
+)
+
 func defineRoutes(router *httptreemux.ContextMux) {
 
 	// Single article group -- gzip middleware
-	a := router.NewGroup("/article")
+	a := router.NewGroup(articleGroup)
 	agz := useGET(a, gzipMdl)
 	{
 		agz.GET("/:id", cacheMdl(fetchArt))
@@ -24,11 +29,12 @@ func defineRoutes(router *httptreemux.ContextMux) {
 	// Reserved section
 
 	{
-		a.POST("/", authRequired(addArticleRoute))
+		a.POST("/", addArticleRoute)
+		a.PUT("/:id", editArticle)
 	}
 
 	// Multiple articles group -- gzip middleware
-	xa := useGET(router.NewGroup("/articles"), gzipMdl)
+	xa := useGET(router.NewGroup(articlesGroup), gzipMdl)
 	{
 		xa.GET("/count", cacheMdl(countArticles))
 		xa.GET("/list", fetchArticleList)
@@ -201,7 +207,12 @@ func login(w http.ResponseWriter, r *http.Request) {
 }
 
 func addArticleRoute(w http.ResponseWriter, r *http.Request) {
-	u := userContext(r.Context())
+	//u := userContext(r.Context())
+	u := User{
+		ID:       2,
+		Username: "debug",
+		IsAdmin:  true,
+	}
 	if u.IsAdmin {
 		title := r.FormValue("title")
 		aID, _ := strconv.Atoi(r.FormValue("author"))
@@ -227,11 +238,49 @@ func addArticleRoute(w http.ResponseWriter, r *http.Request) {
 			date = time.Unix(int64(dateInt), 0)
 		}
 
-		art := addArticle(title, text, author, date)
-		if art.ID == 0 {
-			panic(0)
+		a := addArticle(title, text, author, date)
+		if a.ID == 0 { // Something went wrong
+			sendJSON("Error: impossible to add article", http.StatusInternalServerError, w)
+			return
 		}
-		sendJSON(Article{}, http.StatusCreated, w)
+
+		w.Header().Set("Content-Location", fmt.Sprintf("%s/%d", articleGroup, a.ID))
+		sendJSON(a, http.StatusCreated, w)
+	} else {
+		sendJSON("You are not admin", http.StatusForbidden, w)
+	}
+}
+
+func editArticle(w http.ResponseWriter, r *http.Request) {
+	// u := userContext(r.Context())
+	// debug: dummy user
+	ctx := r.Context()
+	u := User{
+		ID:       2,
+		Username: "debug",
+		IsAdmin:  true,
+	}
+	if u.IsAdmin {
+		p := httptreemux.ContextParams(ctx)
+
+		idParam, _ := strconv.Atoi(p["id"])
+		if idParam <= 0 { // conversion failed or bad input
+			sendJSON("Input not valid", http.StatusBadRequest, w)
+			return
+		}
+
+		id := uint(idParam)
+		title := r.FormValue("title")
+		text := r.FormValue("text")
+
+		a := updateArticle(id, title, text)
+		if a.ID == 0 { // Something went wrong
+			sendJSON("Error: impossible to edit article", http.StatusInternalServerError, w)
+			return
+		}
+
+		w.Header().Set("Content-Location", fmt.Sprintf("%s/%d", articleGroup, a.ID))
+		sendJSON(a, http.StatusOK, w)
 	} else {
 		sendJSON("You are not admin", http.StatusForbidden, w)
 	}
