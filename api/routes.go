@@ -205,7 +205,7 @@ func addArticleRoute(w http.ResponseWriter, r *http.Request) {
 	if u.IsAdmin {
 		title := r.FormValue("title")
 		aID, _ := strconv.Atoi(r.FormValue("author"))
-		author := uint(aID)
+
 		text := r.FormValue("text")
 		dateInt, _ := strconv.Atoi(r.FormValue("date")) // date in unix format
 
@@ -213,8 +213,12 @@ func addArticleRoute(w http.ResponseWriter, r *http.Request) {
 			sendJSON("Input not valid", http.StatusBadRequest, w)
 			return
 		}
-		if author == 0 {
+
+		var author uint
+		if aID <= 0 {
 			author = u.ID
+		} else {
+			author = uint(aID)
 		}
 		var date time.Time
 		if dateInt == 0 { // Error in conversion or parameter empty
