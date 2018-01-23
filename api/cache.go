@@ -89,3 +89,9 @@ func cacheMdl(fn http.HandlerFunc) http.HandlerFunc {
 	}
 
 }
+
+func removeCacheArticle(url string) {
+	cHead.Delete(url)
+	cBody.Delete(url)
+	log.Printf("[CACHE] Forced cache reloading of %s\n", url)
+}

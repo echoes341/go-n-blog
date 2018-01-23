@@ -279,7 +279,11 @@ func editArticle(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		w.Header().Set("Content-Location", fmt.Sprintf("%s/%d", articleGroup, a.ID))
+		url := fmt.Sprintf("%s/%d", articleGroup, a.ID)
+
+		removeCacheArticle(url)
+
+		w.Header().Set("Content-Location", url)
 		sendJSON(a, http.StatusOK, w)
 	} else {
 		sendJSON("You are not admin", http.StatusForbidden, w)
