@@ -31,6 +31,7 @@ func defineRoutes(router *httptreemux.ContextMux) {
 	{
 		a.POST("/", addArticleRoute)
 		a.PUT("/:id", editArticle)
+		a.DELETE("/:id", delArticle)
 	}
 
 	// Multiple articles group -- gzip middleware
@@ -282,3 +283,31 @@ func editArticle(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func delArticle(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	u := userContext(ctx)
+	if !u.IsAdmin {
+		sendJSON("You are not admin", http.StatusForbidden, w)
+		return
+	}
+
+	p := httptreemux.ContextParams(ctx)
+	idParam, _ := strconv.Atoi(p["id"])
+	if idParam <= 0 {
+		sendJSON("Input not valid", http.StatusBadRequest, w)
+		return
+	}
+
+	id := uint(idParam)
+	notFound, err := removeArticleDB(id)
+	if err != nil {
+		if notFound {
+			sendJSON("Article not found", http.StatusNotFound, w)
+			return
+		}
+		sendJSON("Internal Error", http.StatusInternalServerError, w)
+		return
+	}
+	removeCacheArticle(r.URL.EscapedPath())
+	sendJSON("Delete ok", http.StatusOK, w)
+}

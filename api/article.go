@@ -39,6 +39,16 @@ func getArticle(id int) (*Article, error) {
 	return &article, err
 }
 
+func fillArticle(aDb articleDB) Article {
+	return Article{
+		ID:     aDb.ID,
+		Title:  aDb.Title,
+		Text:   aDb.Text,
+		Author: aDb.Author,
+		Date:   aDb.Date,
+	}
+}
+
 func getArticleCountByYM() map[int]map[int]int {
 	rows, err := db.Table("article_dbs").Select("YEAR(date) as year, MONTH(date) as month, COUNT(*) as cnt").Group("YEAR(date), MONTH(date)").Rows()
 	if err != nil {
@@ -77,16 +87,6 @@ func getArticles(n int, date time.Time) []Article {
 	}
 
 	return xa
-}
-
-func fillArticle(aDb articleDB) Article {
-	return Article{
-		ID:     aDb.ID,
-		Title:  aDb.Title,
-		Text:   aDb.Text,
-		Author: aDb.Author,
-		Date:   aDb.Date,
-	}
 }
 
 func addArticle(title, text string, userID uint, date time.Time) Article {
@@ -134,4 +134,25 @@ func updateArticle(id uint, title, text string) Article {
 	// commit transaction
 	tx.Commit()
 	return fillArticle(aDb)
+}
+
+func removeArticleDB(id uint) (bool, error) { //bool is for notfound
+	// begin transaction
+	tx := db.Begin()
+
+	var aDb articleDB
+	err := tx.First(&aDb, id).Error
+	if err != nil {
+		log.Printf("[DEL-ART] Article %d not found. Error: %s", id, err)
+		return true, err
+	}
+
+	err = tx.Delete(&aDb).Error
+	if err != nil {
+		log.Printf("[DEL-ART] %s", err)
+		return false, err
+	}
+
+	tx.Commit()
+	return false, err
 }
