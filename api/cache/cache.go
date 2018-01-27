@@ -1,6 +1,6 @@
 // https://gist.github.com/ismasan/d03d602b8e4e37862547e9a6f0391dc9
 // https://gist.github.com/alxshelepenok/0d5c2fb110e19203655e04f4a52e9d87
-package main
+package cache
 
 import (
 	"bytes"
@@ -50,12 +50,12 @@ func (w *cachedResponseWriter) WriteHeader(i int) {
 	w.r.WriteHeader(i)
 }
 
-func newCache() {
+func New() {
 	cHead = c.New(expiration, 2*expiration)
 	cBody = c.New(expiration, 2*expiration)
 }
 
-func cacheMdl(fn http.HandlerFunc) http.HandlerFunc {
+func Mdl(fn http.HandlerFunc) http.HandlerFunc {
 	// check if the url is in the cache
 	// if yes: call the cache
 	// if not: execute function
@@ -90,7 +90,7 @@ func cacheMdl(fn http.HandlerFunc) http.HandlerFunc {
 
 }
 
-func removeCacheArticle(url string) {
+func RemoveArticle(url string) {
 	cHead.Delete(url)
 	cBody.Delete(url)
 	log.Printf("[CACHE] Forced cache reloading of %s\n", url)

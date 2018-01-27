@@ -21,7 +21,7 @@ func defineRoutes(router *httptreemux.ContextMux) {
 	a := router.NewGroup(articleGroup)
 	agz := useGET(a, gzipMdl)
 	{
-		agz.GET("/:id", cacheMdl(fetchArt))
+		agz.GET("/:id", Mdl(fetchArt))
 		agz.GET("/:id/likes", cacheMdl(fetchArtLikes))
 		agz.GET("/:id/comments", cacheMdl(fetchArtComments))
 	}
