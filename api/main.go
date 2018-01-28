@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/dimfeld/httptreemux"
+	"github.com/echoes341/go-n-blog/api/cache"
 	"github.com/echoes341/go-n-blog/api/models"
 
 	"github.com/jinzhu/gorm"
@@ -29,7 +30,7 @@ func init() {
 
 func main() {
 	mux := httptreemux.NewContextMux()
-	newCache()
+	cache.Start()
 	defineRoutes(mux)
 	http.ListenAndServe(":8080", mux)
 }

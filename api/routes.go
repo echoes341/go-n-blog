@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/dimfeld/httptreemux"
+	"github.com/echoes341/go-n-blog/api/cache"
 )
 
 const (
@@ -21,9 +22,9 @@ func defineRoutes(router *httptreemux.ContextMux) {
 	a := router.NewGroup(articleGroup)
 	agz := useGET(a, gzipMdl)
 	{
-		agz.GET("/:id", Mdl(fetchArt))
-		agz.GET("/:id/likes", cacheMdl(fetchArtLikes))
-		agz.GET("/:id/comments", cacheMdl(fetchArtComments))
+		agz.GET("/:id", cache.Middleware(fetchArt))
+		agz.GET("/:id/likes", cache.Middleware(fetchArtLikes))
+		agz.GET("/:id/comments", cache.Middleware(fetchArtComments))
 	}
 
 	// Reserved section
@@ -37,14 +38,14 @@ func defineRoutes(router *httptreemux.ContextMux) {
 	// Multiple articles group -- gzip middleware
 	xa := useGET(router.NewGroup(articlesGroup), gzipMdl)
 	{
-		xa.GET("/count", cacheMdl(countArticles))
+		xa.GET("/count", cache.Middleware(countArticles))
 		xa.GET("/list", fetchArticleList)
 		xa.GET("/list/:year", fetchArticleList)
 		xa.GET("/list/:year/:month", fetchArticleList)
 		xa.GET("/list/:year/:month/:day", fetchArticleList)
 	}
 
-	router.GET("/test/cache/date", cacheMdl(dateTest))
+	router.GET("/test/cache/date", cache.Middleware(dateTest))
 
 	router.GET("/login", authRequired(login))
 }
@@ -274,7 +275,7 @@ func editArticle(w http.ResponseWriter, r *http.Request) {
 
 		url := fmt.Sprintf("%s/%d", articleGroup, a.ID)
 
-		removeCacheArticle(url)
+		cache.RemoveURL(url)
 
 		w.Header().Set("Content-Location", url)
 		sendJSON(a, http.StatusOK, w)
@@ -308,6 +309,7 @@ func delArticle(w http.ResponseWriter, r *http.Request) {
 		sendJSON("Internal Error", http.StatusInternalServerError, w)
 		return
 	}
-	removeCacheArticle(r.URL.EscapedPath())
+	cache.RemoveURL(r.URL.EscapedPath())
+
 	sendJSON("Delete ok", http.StatusOK, w)
 }

@@ -1,3 +1,4 @@
+// Package cache contains all the cache-related methods and utilities
 // https://gist.github.com/ismasan/d03d602b8e4e37862547e9a6f0391dc9
 // https://gist.github.com/alxshelepenok/0d5c2fb110e19203655e04f4a52e9d87
 package cache
@@ -21,41 +22,44 @@ const (
 var cHead *c.Cache
 var cBody *c.Cache
 
-type cachedResponseWriter struct {
+type responseWriter struct {
 	buff  io.Writer
 	r     http.ResponseWriter
 	multi io.Writer
 }
 
-func newCachedResponseWriter(buff io.Writer, resp http.ResponseWriter) http.ResponseWriter {
+func newResponseWriter(buff io.Writer, resp http.ResponseWriter) http.ResponseWriter {
 	multi := io.MultiWriter(buff, resp)
-	return &cachedResponseWriter{
+	return &responseWriter{
 		buff:  buff,
 		r:     resp,
 		multi: multi,
 	}
 }
 
-func (w *cachedResponseWriter) Header() http.Header {
+func (w *responseWriter) Header() http.Header {
 	return w.r.Header()
 }
 
-func (w *cachedResponseWriter) Write(b []byte) (int, error) {
+func (w *responseWriter) Write(b []byte) (int, error) {
 	// here I can intercept body
 	return w.multi.Write(b)
 }
 
-func (w *cachedResponseWriter) WriteHeader(i int) {
+func (w *responseWriter) WriteHeader(i int) {
 	// here i can intercept header
 	w.r.WriteHeader(i)
 }
 
-func New() {
+// Start initialises cache system
+func Start() {
 	cHead = c.New(expiration, 2*expiration)
 	cBody = c.New(expiration, 2*expiration)
 }
 
-func Mdl(fn http.HandlerFunc) http.HandlerFunc {
+// Middleware it's a http middleware, recording the output of a HandlerFunc
+// and repeating it until it's in the cache
+func Middleware(fn http.HandlerFunc) http.HandlerFunc {
 	// check if the url is in the cache
 	// if yes: call the cache
 	// if not: execute function
@@ -79,7 +83,7 @@ func Mdl(fn http.HandlerFunc) http.HandlerFunc {
 			log.Printf("[CACHE] Building cache for %s\n", u)
 
 			body := bytes.NewBuffer([]byte{})
-			cw := newCachedResponseWriter(body, w)
+			cw := newResponseWriter(body, w)
 			fn(cw, r)
 
 			h := cw.Header() // pick the header, even if it's already sent
@@ -90,7 +94,8 @@ func Mdl(fn http.HandlerFunc) http.HandlerFunc {
 
 }
 
-func RemoveArticle(url string) {
+// RemoveURL removes given path from cache
+func RemoveURL(url string) {
 	cHead.Delete(url)
 	cBody.Delete(url)
 	log.Printf("[CACHE] Forced cache reloading of %s\n", url)
