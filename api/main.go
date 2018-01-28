@@ -23,7 +23,6 @@ func init() {
 	}
 
 	db.AutoMigrate(&userDB{})
-	db.AutoMigrate(&articleDB{})
 	db.AutoMigrate(&commentDB{})
 	db.AutoMigrate(&likeDB{})
 }

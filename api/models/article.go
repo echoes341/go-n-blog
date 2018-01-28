@@ -1,4 +1,4 @@
-package main
+package models
 
 import (
 	"log"
@@ -24,7 +24,8 @@ type Article struct {
 	Date   time.Time `json:"date"`
 }
 
-func getArticle(id int) (*Article, error) {
+// ArticleGet returns a single article, selected by its ID
+func ArticleGet(id int) (*Article, error) {
 	var aDb articleDB
 	err := db.First(&aDb, id).Error
 
@@ -39,6 +40,8 @@ func getArticle(id int) (*Article, error) {
 	return &article, err
 }
 
+// fillArticle change the articleDB, linked to DB
+// to an indipendent struct
 func fillArticle(aDb articleDB) Article {
 	return Article{
 		ID:     aDb.ID,
@@ -49,7 +52,12 @@ func fillArticle(aDb articleDB) Article {
 	}
 }
 
-func getArticleCountByYM() map[int]map[int]int {
+// ArticleCount return a structured count of all the articles
+// by year and month. Care: this method is mysql-specific
+// For example
+// 2017
+//   |- 0: 2 (2 articles on january 2017)
+func ArticleCount() map[int]map[int]int {
 	rows, err := db.Table("article_dbs").Select("YEAR(date) as year, MONTH(date) as month, COUNT(*) as cnt").Group("YEAR(date), MONTH(date)").Rows()
 	if err != nil {
 		log.Panicln(err)
@@ -76,7 +84,8 @@ func getArticleCountByYM() map[int]map[int]int {
 	return result
 }
 
-func getArticles(n int, date time.Time) []Article {
+// Articles returns n articles till date in descending order
+func Articles(n int, date time.Time) []Article {
 	a := []articleDB{}
 	// fetch n first articles in descending order
 	db.Where("date <= ?", date).Order("date DESC").Limit(n).Find(&a)
@@ -89,7 +98,8 @@ func getArticles(n int, date time.Time) []Article {
 	return xa
 }
 
-func addArticle(title, text string, userID uint, date time.Time) Article {
+// ArticleAdd adds an article in database
+func ArticleAdd(title, text string, userID uint, date time.Time) Article {
 	a := articleDB{
 		Author: userID,
 		Date:   date,
@@ -102,7 +112,8 @@ func addArticle(title, text string, userID uint, date time.Time) Article {
 	return fillArticle(a)
 }
 
-func updateArticle(id uint, title, text string) Article {
+// ArticleUpdate updates an article and saves it in the database
+func ArticleUpdate(id uint, title, text string) Article {
 	// begin transaction
 
 	tx := db.Begin()
@@ -136,7 +147,8 @@ func updateArticle(id uint, title, text string) Article {
 	return fillArticle(aDb)
 }
 
-func removeArticleDB(id uint) (bool, error) { //bool is for notfound
+// ArticleRemove removes an Article from the database, selected by ID
+func ArticleRemove(id uint) (bool, error) { //bool is for notfound
 	// begin transaction
 	tx := db.Begin()
 

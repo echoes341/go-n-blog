@@ -18,12 +18,12 @@ var db *gorm.DB
 // - a is the db address
 // - d is the db name
 func NewDB(u, p, a, d string) (*gorm.DB, error) {
-	//db, err = gorm.Open("mysql", "gonblog:gonblog@tcp(127.0.0.1:3306)/gonblog?charset=utf8&parseTime=True&loc=Local")
 	var err error
 	par := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local", u, p, a, d)
 	log.Println(par)
 	db, err = gorm.Open("mysql", par)
 	// automigrate should be here
+	db.AutoMigrate(&articleDB{})
 	return db, err
 }
 
