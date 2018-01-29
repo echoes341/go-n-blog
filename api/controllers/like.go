@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -41,15 +40,4 @@ func (lc *LikeController) Likes(w http.ResponseWriter, r *http.Request) {
 
 	sendJSON(l, http.StatusOK, w)
 
-}
-
-func login(w http.ResponseWriter, r *http.Request) {
-	u := userContext(r.Context())
-	var msg string
-	if u.IsAdmin {
-		msg = fmt.Sprintf("Welcome %s. You are admin!", u.Username)
-	} else {
-		msg = fmt.Sprintf("Welcome %s. You are not admin", u.Username)
-	}
-	sendJSON(msg, http.StatusOK, w)
 }

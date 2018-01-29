@@ -13,11 +13,15 @@ import (
 )
 
 // ArticleController is the specific structure controlling articles
-type ArticleController struct{}
+type ArticleController struct {
+	ArticleGroup string
+}
 
 // NewArticleController returns an emptty ArticleController to use the specific article methods
 func NewArticleController() *ArticleController {
-	return &ArticleController{}
+	return &ArticleController{
+		ArticleGroup: "/article",
+	}
 }
 
 // Fetch is a http request handler to returns an article as JSON
@@ -126,7 +130,7 @@ func (ac *ArticleController) Edit(w http.ResponseWriter, r *http.Request) {
 	// u := userContext(r.Context())
 	// debug: dummy user
 	ctx := r.Context()
-	u := userContext(ctx)
+	u := models.UserContext(ctx)
 	if u.IsAdmin {
 		p := httptreemux.ContextParams(ctx)
 
@@ -158,7 +162,7 @@ func (ac *ArticleController) Edit(w http.ResponseWriter, r *http.Request) {
 
 // Add is the http handler to add an Article
 func (ac *ArticleController) Add(w http.ResponseWriter, r *http.Request) {
-	u := userContext(r.Context())
+	u := models.UserContext(r.Context())
 
 	if u.IsAdmin {
 		title := r.FormValue("title")
@@ -191,7 +195,7 @@ func (ac *ArticleController) Add(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		w.Header().Set("Content-Location", fmt.Sprintf("%s/%d", articleGroup, a.ID))
+		w.Header().Set("Content-Location", fmt.Sprintf("%s/%d", ac.ArticleGroup, a.ID))
 		sendJSON(a, http.StatusCreated, w)
 	} else {
 		sendJSON("You are not admin", http.StatusForbidden, w)
@@ -201,7 +205,7 @@ func (ac *ArticleController) Add(w http.ResponseWriter, r *http.Request) {
 // Delete is the http handler to remove an Article
 func (ac *ArticleController) Delete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	u := userContext(ctx)
+	u := models.UserContext(ctx)
 	if !u.IsAdmin {
 		sendJSON("You are not admin", http.StatusForbidden, w)
 		return

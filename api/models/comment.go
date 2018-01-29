@@ -45,14 +45,14 @@ func CommentsCount(IDArt uint) int {
 // Comments returns all the comments to an article
 func Comments(IDArt int) ([]Comment, error) {
 	var c []Comment
-	var csDB []commentDB
+	var cDB []commentDB
 
-	err := db.Find(&csDB, "id_art = ?", IDArt).Error
-	fmt.Println(csDB)
+	err := db.Find(&cDB, "id_art = ?", IDArt).Error
+	fmt.Println(cDB)
 	if err != nil {
 		return c, err
 	}
-	for _, v := range csDB {
+	for _, v := range cDB {
 		c = append(c, fillComment(v))
 	}
 	return c, nil
