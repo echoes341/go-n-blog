@@ -107,10 +107,10 @@ func (ac *ArticleController) List(w http.ResponseWriter, r *http.Request) {
 		single := map[string]interface{}{}
 		single["article"] = ar
 		if likes { // get likes count
-			single["likes"] = getLikesCount(ar.ID)
+			single["likes"] = models.LikesCount(ar.ID)
 		}
 		if comments {
-			single["comments"] = getCommentCount(ar.ID)
+			single["comments"] = models.CommentsCount(ar.ID)
 		}
 		answer = append(answer, single)
 	}

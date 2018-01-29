@@ -1,4 +1,4 @@
-package main
+package models
 
 import (
 	"fmt"
@@ -24,14 +24,26 @@ type Comment struct {
 	Content string    `json:"content"`
 }
 
-func getCommentCount(IDArt uint) int {
+func fillComment(cDB commentDB) Comment {
+	return Comment{
+		ID:      cDB.ID,
+		IDArt:   cDB.IDArt,
+		IDUser:  cDB.IDUser,
+		Date:    cDB.Date,
+		Content: cDB.Content,
+	}
+}
+
+// CommentsCount returns the number of the comments related to an article
+func CommentsCount(IDArt uint) int {
 	i := 0
 	// count all the records
 	db.Where("id_art = ?", IDArt).Find(&[]commentDB{}).Count(&i)
 	return i
 }
 
-func getComments(IDArt int) ([]Comment, error) {
+// Comments returns all the comments to an article
+func Comments(IDArt int) ([]Comment, error) {
 	var c []Comment
 	var csDB []commentDB
 
@@ -41,13 +53,7 @@ func getComments(IDArt int) ([]Comment, error) {
 		return c, err
 	}
 	for _, v := range csDB {
-		c = append(c, Comment{
-			ID:      v.ID,
-			IDArt:   v.IDArt,
-			IDUser:  v.IDUser,
-			Date:    v.Date,
-			Content: v.Content,
-		})
+		c = append(c, fillComment(v))
 	}
 	return c, nil
 }
