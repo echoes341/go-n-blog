@@ -21,20 +21,13 @@ type Like struct {
 	Date   time.Time `json:"date"`
 }
 
-func CountLikes(IDArt int) (int, error) {
-	n := 0
-	// find and count all the likes of that given article
-	err := db.Find(&[]likeDB{}, "id_art = ?", IDArt).Count(&n).Error
-
-	// count all the records
-	return n, err
-}
-
+// IsLiked returns true if an article has been liked by a specific user
 func IsLiked(IDArt, IDUser int) bool {
 	err := db.First(&likeDB{}, "id_art = ? AND id_user = ?", IDArt, IDUser)
 	return err == nil
 }
 
+// Likes returns all the likes related to an article
 func Likes(IDArt int) ([]Like, error) {
 	var l []Like
 	var lsdb []likeDB
@@ -54,8 +47,10 @@ func Likes(IDArt int) ([]Like, error) {
 	return l, nil
 }
 
-func getLikesCount(IDArt uint) int {
+// LikesCount counts how many likes has an article
+func LikesCount(IDArt uint) int {
 	i := 0
+	// find and count all the likes of that given article
 	db.Where("id_art = ?", IDArt).Find(&[]likeDB{}).Count(&i)
 	return i
 }

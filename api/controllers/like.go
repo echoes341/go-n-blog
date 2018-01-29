@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/dimfeld/httptreemux"
 	"github.com/echoes341/go-n-blog/api/models"
@@ -20,7 +19,7 @@ func NewLikeController() *LikeController {
 }
 
 // Likes is the http handler to get the likes associated with an article
-func Likes(w http.ResponseWriter, r *http.Request) {
+func (lc *LikeController) Likes(w http.ResponseWriter, r *http.Request) {
 	p := httptreemux.ContextParams(r.Context())
 	IDArt, err := strconv.Atoi(p["id"])
 	if err != nil {
@@ -42,10 +41,6 @@ func Likes(w http.ResponseWriter, r *http.Request) {
 
 	sendJSON(l, http.StatusOK, w)
 
-}
-
-func dateTest(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Time now is %d", time.Now().UnixNano())
 }
 
 func login(w http.ResponseWriter, r *http.Request) {
