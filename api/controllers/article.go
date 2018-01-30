@@ -219,9 +219,9 @@ func (ac *ArticleController) Delete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	id := uint(idParam)
-	notFound, err := models.ArticleRemove(id)
+	err := models.ArticleRemove(id)
 	if err != nil {
-		if notFound {
+		if err == models.ErrNotFound {
 			sendJSON("Article not found", http.StatusNotFound, w)
 			return
 		}

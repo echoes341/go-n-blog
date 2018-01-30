@@ -14,6 +14,11 @@ import (
 
 var db *gorm.DB
 
+var (
+	// ErrNotFound is the error encountered when record is not found in db
+	ErrNotFound = gorm.ErrRecordNotFound
+)
+
 // NewDB loads the new mysql database
 // - u is the user
 // - p is the password

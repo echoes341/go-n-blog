@@ -148,7 +148,8 @@ func ArticleUpdate(id uint, title, text string) Article {
 }
 
 // ArticleRemove removes an Article from the database, selected by ID
-func ArticleRemove(id uint) (bool, error) { //bool is for notfound
+// It removes also the comments and the likes associated
+func ArticleRemove(id uint) error { //bool is for notfound
 	// begin transaction
 	tx := db.Begin()
 
@@ -156,15 +157,41 @@ func ArticleRemove(id uint) (bool, error) { //bool is for notfound
 	err := tx.First(&aDb, id).Error
 	if err != nil {
 		log.Printf("[DEL-ART] Article %d not found. Error: %s", id, err)
-		return true, err
+		return err
 	}
 
 	err = tx.Delete(&aDb).Error
 	if err != nil {
 		log.Printf("[DEL-ART] %s", err)
-		return false, err
+		return err
+	}
+
+	var cDB []commentDB
+	var lDB []likeDB
+	// looking for comments and likes and deleting them
+	err = db.Find(&cDB, "id_art = ?", id).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		log.Printf("[DEL-ART] %s", err)
+		return err
+	}
+	err = tx.Delete(&cDB).Error
+	if err != nil {
+		log.Printf("[DEL-ART] %s", err)
+		return err
+	}
+
+	// like
+	err = db.Find(&lDB, "id_art = ?", id).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		log.Printf("[DEL-ART] %s", err)
+		return err
+	}
+	err = tx.Delete(&lDB).Error
+	if err != nil {
+		log.Printf("[DEL-ART] %s", err)
+		return err
 	}
 
 	tx.Commit()
-	return false, err
+	return err
 }
