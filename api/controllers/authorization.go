@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,11 +13,15 @@ import (
 	"github.com/echoes341/go-n-blog/api/models"
 )
 
-const (
-	badReq byte = iota
-	userPassNotValid
-	jwtNotValid
-	jwtExpired
+var (
+	// ErrLoginBadRequest is encountered when login request is wrong
+	ErrLoginBadRequest = errors.New("Bad Request")
+	// ErrLoginNotValid is encountered when username or password are wrong
+	ErrLoginNotValid = errors.New("Username and/or password do not match")
+	// ErrJWTNotValid is encountered when JWT examined is malformed
+	ErrJWTNotValid = errors.New("JWT not valid")
+	// ErrJWTExpired is encountered when JWT is expired
+	ErrJWTExpired = errors.New("JWT is expired")
 )
 
 // https://www.owasp.org/index.php/REST_Security_Cheat_Sheet
@@ -35,21 +40,10 @@ func NewAuth() *Auth {
 	return new(Auth)
 }
 
-func unauthorized(status byte, w http.ResponseWriter) {
-	var message string
-	switch status {
-	case badReq:
-		message = "Bad Request"
-	case userPassNotValid:
-		message = "Username and/or password do not match"
-	case jwtNotValid:
-		message = "JWT not valid"
-	case jwtExpired:
-		message = "JWT expired"
-	}
-	log.Printf("LOGIN Forbidden: %s", message)
+func unauthorized(err error, w http.ResponseWriter) {
+	log.Printf("LOGIN Forbidden: %s", err)
 	w.Header().Set("WWW-Authenticate", `Basic realm="Restricted"`)
-	sendJSON(message, http.StatusUnauthorized, w)
+	sendJSON(err.Error(), http.StatusUnauthorized, w)
 }
 
 func buildJWT(u models.User) (string, error) {
@@ -103,7 +97,7 @@ func (at *Auth) AuthRequired(fn http.HandlerFunc) http.HandlerFunc {
 		auth := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
 
 		if len(auth) != 2 {
-			unauthorized(badReq, w)
+			unauthorized(ErrLoginBadRequest, w)
 			return
 		}
 
@@ -112,20 +106,20 @@ func (at *Auth) AuthRequired(fn http.HandlerFunc) http.HandlerFunc {
 		case "Basic":
 			b64, err := base64.StdEncoding.DecodeString(auth[1])
 			if err != nil {
-				unauthorized(badReq, w)
+				unauthorized(ErrLoginBadRequest, w)
 				return
 			}
 
 			authDatas := strings.SplitN(string(b64), ":", 2)
 			if len(authDatas) != 2 {
-				unauthorized(badReq, w)
+				unauthorized(ErrLoginBadRequest, w)
 				return
 			}
 
 			n := authDatas[0] // username
 			p := authDatas[1] // password
 			if n == "" || p == "" {
-				unauthorized(badReq, w)
+				unauthorized(ErrLoginBadRequest, w)
 				return
 			}
 			/* SIGNUP
@@ -138,7 +132,7 @@ func (at *Auth) AuthRequired(fn http.HandlerFunc) http.HandlerFunc {
 
 			u, err := models.UserMatch(n, p)
 			if err != nil {
-				unauthorized(userPassNotValid, w)
+				unauthorized(ErrLoginNotValid, w)
 				return
 			}
 			token, err := buildJWT(u)
@@ -156,18 +150,18 @@ func (at *Auth) AuthRequired(fn http.HandlerFunc) http.HandlerFunc {
 				// if strings.Contains(err.Error(), "expired") {
 				if validation, ok := err.(*jwt.ValidationError); ok {
 					if validation.Errors&jwt.ValidationErrorExpired != 0 {
-						unauthorized(jwtExpired, w)
+						unauthorized(ErrJWTExpired, w)
 						return
 					}
 				}
-				unauthorized(jwtNotValid, w)
+				unauthorized(ErrJWTNotValid, w)
 				return
 			}
 			// Put user into context
 			r = r.WithContext(models.UserAddToContext(r.Context(), &u))
 			fn(w, r)
 		default:
-			unauthorized(badReq, w)
+			unauthorized(ErrLoginBadRequest, w)
 		}
 
 	}
