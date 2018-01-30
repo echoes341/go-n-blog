@@ -8,6 +8,7 @@ import (
 	"github.com/dimfeld/httptreemux"
 	"github.com/echoes341/go-n-blog/api/cache"
 	"github.com/echoes341/go-n-blog/api/controllers"
+	"github.com/echoes341/go-n-blog/api/models"
 )
 
 const (
@@ -21,6 +22,8 @@ func defineRoutes(router *httptreemux.ContextMux) {
 	a := router.NewGroup(articleGroup)
 	ac := controllers.NewArticleController()
 	lc := controllers.NewLikeController()
+	uc := controllers.NewCommentController()
+	at := controllers.NewAuth()
 	agz := useGET(a, gzipMdl)
 	{
 		// get article by id
@@ -28,7 +31,7 @@ func defineRoutes(router *httptreemux.ContextMux) {
 		// get related likes of an article
 		agz.GET("/:id/likes", cache.Middleware(lc.Likes))
 		// get related comments of an article
-		agz.GET("/:id/comments", cache.Middleware(fetchArtComments))
+		agz.GET("/:id/comments", cache.Middleware(uc.ByArticleID))
 	}
 
 	// Reserved section
@@ -55,9 +58,20 @@ func defineRoutes(router *httptreemux.ContextMux) {
 
 	router.GET("/test/cache/date", cache.Middleware(dateTest))
 
-	router.GET("/login", authRequired(login))
+	router.GET("/login", at.AuthRequired(login))
 }
 
 func dateTest(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Time now is %d", time.Now().UnixNano())
+}
+
+func login(w http.ResponseWriter, r *http.Request) {
+	u := models.UserContext(r.Context())
+	var msg string
+	if u.IsAdmin {
+		msg = fmt.Sprintf("Welcome %s. You are admin!", u.Username)
+	} else {
+		msg = fmt.Sprintf("Welcome %s. You are not admin", u.Username)
+	}
+	fmt.Fprintln(w, msg)
 }

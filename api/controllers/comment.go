@@ -14,11 +14,11 @@ type CommentController struct{}
 
 // NewCommentController returns an empty CommentController
 func NewCommentController() *CommentController {
-	return &CommentController{}
+	return new(CommentController)
 }
 
 // ByArticleID handles request and gives back comments list of an Article
-func ByArticleID(w http.ResponseWriter, r *http.Request) {
+func (uc *CommentController) ByArticleID(w http.ResponseWriter, r *http.Request) {
 	p := httptreemux.ContextParams(r.Context())
 	IDArt, err := strconv.Atoi(p["id"])
 	if err != nil {

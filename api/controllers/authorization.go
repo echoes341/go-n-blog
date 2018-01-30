@@ -27,6 +27,14 @@ type userToken struct {
 	jwt.StandardClaims
 }
 
+// Auth is the struct to use the authorization functions
+type Auth struct{}
+
+// NewAuth returns a zeroed Auth struct pointer
+func NewAuth() *Auth {
+	return new(Auth)
+}
+
 func unauthorized(status byte, w http.ResponseWriter) {
 	var message string
 	switch status {
@@ -76,30 +84,19 @@ func checkJWT(j string) (models.User, error) {
 	return models.User{}, fmt.Errorf("JWT not valid")
 }
 
-func login(w http.ResponseWriter, r *http.Request) {
-	u := models.UserContext(r.Context())
-	var msg string
-	if u.IsAdmin {
-		msg = fmt.Sprintf("Welcome %s. You are admin!", u.Username)
-	} else {
-		msg = fmt.Sprintf("Welcome %s. You are not admin", u.Username)
-	}
-	sendJSON(msg, http.StatusOK, w)
-}
-
-// ExecIfAdmin checks if the user is admin and then executes the function associated
-func ExecIfAdmin(fn http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+// ExecIfAdmin checks if login is valid and if the user is admin and then executes the function associated
+func (at *Auth) ExecIfAdmin(fn http.HandlerFunc) http.HandlerFunc {
+	return at.AuthRequired(func(w http.ResponseWriter, r *http.Request) {
 		u := models.UserContext(r.Context())
 		if !u.IsAdmin {
 			sendJSON("You are not admin", http.StatusForbidden, w)
 		}
 		fn(w, r)
-	}
+	})
 }
 
 // AuthRequired is an authorization middleware
-func AuthRequired(fn http.HandlerFunc) http.HandlerFunc {
+func (at *Auth) AuthRequired(fn http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// https://gist.github.com/elithrar/9146306
 		// https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication
@@ -111,6 +108,7 @@ func AuthRequired(fn http.HandlerFunc) http.HandlerFunc {
 		}
 
 		switch auth[0] {
+		// Auth and get jwt
 		case "Basic":
 			b64, err := base64.StdEncoding.DecodeString(auth[1])
 			if err != nil {
@@ -149,6 +147,7 @@ func AuthRequired(fn http.HandlerFunc) http.HandlerFunc {
 				return
 			}
 			sendJSON(token, http.StatusOK, w)
+		// Check jwt and fill user infos
 		case "Bearer":
 			// second argument is JWT
 			u, err := checkJWT(auth[1])
