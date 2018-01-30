@@ -172,11 +172,13 @@ func ArticleRemove(id uint) error { //bool is for notfound
 	err = db.Find(&cDB, "id_art = ?", id).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		log.Printf("[DEL-ART] %s", err)
+		tx.Rollback()
 		return err
 	}
 	err = tx.Delete(&cDB).Error
 	if err != nil {
 		log.Printf("[DEL-ART] %s", err)
+		tx.Rollback()
 		return err
 	}
 
@@ -184,11 +186,13 @@ func ArticleRemove(id uint) error { //bool is for notfound
 	err = db.Find(&lDB, "id_art = ?", id).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		log.Printf("[DEL-ART] %s", err)
+		tx.Rollback()
 		return err
 	}
 	err = tx.Delete(&lDB).Error
 	if err != nil {
 		log.Printf("[DEL-ART] %s", err)
+		tx.Rollback()
 		return err
 	}
 
