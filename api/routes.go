@@ -14,16 +14,18 @@ import (
 const (
 	articleGroup  = "/article"
 	articlesGroup = "/articles"
+	likeGroup     = "/like"
 )
 
 func defineRoutes(router *httptreemux.ContextMux) {
 
-	// Single article group -- gzip middleware
-	a := router.NewGroup(articleGroup)
 	ac := controllers.NewArticleController()
 	lc := controllers.NewLikeController()
 	uc := controllers.NewCommentController()
 	at := controllers.NewAuth()
+
+	// Single article group -- gzip middleware
+	a := router.NewGroup(articleGroup)
 	aGz := useGET(a, gzipMdl)
 	{
 		// get article by id
@@ -32,6 +34,11 @@ func defineRoutes(router *httptreemux.ContextMux) {
 		aGz.GET("/:id/likes", cache.Middleware(lc.Likes))
 		// get related comments of an article
 		aGz.GET("/:id/comments", cache.Middleware(uc.ByArticleID))
+	}
+
+	l := router.NewGroup(likeGroup)
+	{
+		l.POST("/:id", lc.Toggle)
 	}
 
 	// Reserved section

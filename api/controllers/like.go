@@ -22,7 +22,7 @@ func (lc *LikeController) Likes(w http.ResponseWriter, r *http.Request) {
 	p := httptreemux.ContextParams(r.Context())
 	IDArt, err := strconv.Atoi(p["id"])
 	if err != nil {
-		sendJSON("ID not valid", http.StatusNotFound, w)
+		sendJSON(ErrIDNotValid, http.StatusNotFound, w)
 		return
 	}
 
@@ -40,4 +40,22 @@ func (lc *LikeController) Likes(w http.ResponseWriter, r *http.Request) {
 
 	sendJSON(l, http.StatusOK, w)
 
+}
+
+// Toggle is http handler to toggle like on given article
+func (lc *LikeController) Toggle(w http.ResponseWriter, r *http.Request) {
+	p := httptreemux.ContextParams(r.Context())
+	aID, _ := strconv.Atoi(p["id"])
+
+	if aID <= 0 {
+		sendJSON(ErrIDNotValid, http.StatusBadRequest, w)
+		return
+	}
+	u := models.UserContext(r.Context())
+	added, err := models.LikeToggle(uint(aID), u.ID)
+	if err != nil {
+		sendJSON(err, http.StatusInternalServerError, w)
+		return
+	}
+	sendJSON(added, http.StatusOK, w)
 }

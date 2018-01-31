@@ -27,14 +27,14 @@ func NewArticleController() *ArticleController {
 // Fetch is a http request handler to returns an article as JSON
 func (ac *ArticleController) Fetch(w http.ResponseWriter, r *http.Request) {
 	p := httptreemux.ContextParams(r.Context())
-	id, err := strconv.Atoi(p["id"])
+	id, _ := strconv.Atoi(p["id"])
 
-	if err != nil {
-		sendJSON("ID not valid", http.StatusNotFound, w)
+	if id <= 0 {
+		sendJSON(ErrIDNotValid, http.StatusNotFound, w)
 		return
 	}
 
-	article, err := models.ArticleGet(id)
+	article, err := models.ArticleGet(uint(id))
 	if err != nil {
 		log.Println(err)
 		sendJSON("Article not found", http.StatusNotFound, w)

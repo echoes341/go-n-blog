@@ -35,6 +35,14 @@ func IsLiked(aID, uID uint) bool {
 // LikeToggle set a like by a user or removes it
 func LikeToggle(aID, uID uint) (added bool, err error) {
 	tx := db.Begin()
+
+	// Check if article exist, otherwise return error
+	_, err = articleGet(aID, tx)
+	if err != nil {
+		// Rollback is not necessary as we have not edited the database
+		return
+	}
+
 	var lDB likeDB
 	// search if liked is present
 	if lDB, err = fetchLike(aID, uID, tx); err == nil {
@@ -43,6 +51,7 @@ func LikeToggle(aID, uID uint) (added bool, err error) {
 			tx.Rollback()
 			return
 		}
+		tx.Commit()
 		return
 	}
 
@@ -51,7 +60,9 @@ func LikeToggle(aID, uID uint) (added bool, err error) {
 		IDUser: uID,
 		Date:   time.Now(),
 	}
-	tx.NewRecord(lDB)
+	if new := tx.NewRecord(lDB); !new {
+		return
+	}
 	err = tx.Create(&lDB).Error
 	if err != nil {
 		tx.Rollback()

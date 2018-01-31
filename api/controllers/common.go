@@ -2,8 +2,14 @@ package controllers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
+)
+
+var (
+	// ErrIDNotValid is for not valid article/likes/comments ids ( <= 0 )
+	ErrIDNotValid = errors.New("ID not valid")
 )
 
 type answer struct {

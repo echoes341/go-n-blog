@@ -24,10 +24,9 @@ type Article struct {
 	Date   time.Time `json:"date"`
 }
 
-// ArticleGet returns a single article, selected by its ID
-func ArticleGet(id int) (*Article, error) {
+func articleGet(id uint, tx *gorm.DB) (*Article, error) {
 	var aDb articleDB
-	err := db.First(&aDb, id).Error
+	err := tx.First(&aDb, id).Error
 
 	article := Article{
 		ID:     aDb.ID,
@@ -38,6 +37,11 @@ func ArticleGet(id int) (*Article, error) {
 	}
 
 	return &article, err
+}
+
+// ArticleGet returns a single article, selected by its ID
+func ArticleGet(id uint) (*Article, error) {
+	return articleGet(id, db)
 }
 
 // fillArticle change the articleDB, linked to DB
