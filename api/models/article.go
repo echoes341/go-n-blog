@@ -149,12 +149,12 @@ func ArticleUpdate(id uint, title, text string) Article {
 
 // ArticleRemove removes an Article from the database, selected by ID
 // It removes also the comments and the likes associated
-func ArticleRemove(id uint) error { //bool is for notfound
+func ArticleRemove(id uint) (err error) { //bool is for notfound
 	// begin transaction
 	tx := db.Begin()
 
 	var aDb articleDB
-	err := tx.First(&aDb, id).Error
+	err = tx.First(&aDb, id).Error
 	if err != nil {
 		log.Printf("[DEL-ART] Article %d not found. Error: %s", id, err)
 		return err

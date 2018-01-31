@@ -17,7 +17,7 @@ var (
 	// ErrLoginBadRequest is encountered when login request is wrong
 	ErrLoginBadRequest = errors.New("Bad Request")
 	// ErrLoginNotValid is encountered when username or password are wrong
-	ErrLoginNotValid = errors.New("Username and/or password do not match")
+	ErrLoginNotValid = models.ErrLoginError
 	// ErrJWTNotValid is encountered when JWT examined is malformed
 	ErrJWTNotValid = errors.New("JWT not valid")
 	// ErrJWTExpired is encountered when JWT is expired

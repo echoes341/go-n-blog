@@ -35,25 +35,23 @@ func fillComment(cDB commentDB) Comment {
 }
 
 // CommentsCount returns the number of the comments related to an article
-func CommentsCount(IDArt uint) int {
-	i := 0
+func CommentsCount(IDArt uint) (count int) {
 	// count all the records
-	db.Where("id_art = ?", IDArt).Find(&[]commentDB{}).Count(&i)
-	return i
+	db.Where("id_art = ?", IDArt).Find(&[]commentDB{}).Count(&count)
+	return count
 }
 
 // Comments returns all the comments to an article
-func Comments(IDArt int) ([]Comment, error) {
-	var c []Comment
+func Comments(IDArt int) (xc []Comment, err error) {
 	var cDB []commentDB
 
-	err := db.Find(&cDB, "id_art = ?", IDArt).Error
+	err = db.Find(&cDB, "id_art = ?", IDArt).Error
 	fmt.Println(cDB)
 	if err != nil {
-		return c, err
+		return xc, err
 	}
 	for _, v := range cDB {
-		c = append(c, fillComment(v))
+		xc = append(xc, fillComment(v))
 	}
-	return c, nil
+	return xc, nil
 }

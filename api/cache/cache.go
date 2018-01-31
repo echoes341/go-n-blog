@@ -16,11 +16,11 @@ import (
 )
 
 const (
-	expiration = 5 * time.Minute
+	exp = 5 * time.Minute // cache expiration
 )
 
-var cHead *c.Cache
-var cBody *c.Cache
+var head *c.Cache
+var body *c.Cache
 
 type responseWriter struct {
 	buff  io.Writer
@@ -53,8 +53,7 @@ func (w *responseWriter) WriteHeader(i int) {
 
 // Start initialises cache system
 func Start() {
-	cHead = c.New(expiration, 2*expiration)
-	cBody = c.New(expiration, 2*expiration)
+	head, body = c.New(exp, 2*exp), c.New(exp, 2*exp)
 }
 
 // Middleware it's a http middleware, recording the output of a HandlerFunc
@@ -68,27 +67,27 @@ func Middleware(fn http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		u := r.URL.EscapedPath()
 		// check cache
-		if head, hFound := cHead.Get(u); hFound {
+		if hdr, hOk := head.Get(u); hOk {
 			log.Printf("[CACHE] Cache present for %s\n", u)
-			h := head.(http.Header)
+			h := hdr.(http.Header)
 			for key, value := range h {
 				w.Header().Set(key, strings.Join(value, ","))
 			}
 
-			if body, bFound := cBody.Get(u); bFound {
-				fmt.Fprintf(w, "%s", body.(string))
+			if b, bOk := body.Get(u); bOk {
+				fmt.Fprintf(w, "%s", b.(string))
 			}
 		} else {
 			// intercept function writers and save it in the cache
 			log.Printf("[CACHE] Building cache for %s\n", u)
 
-			body := bytes.NewBuffer([]byte{})
-			cw := newResponseWriter(body, w)
+			b := bytes.NewBuffer([]byte{})
+			cw := newResponseWriter(b, w)
 			fn(cw, r)
 
 			h := cw.Header() // pick the header, even if it's already sent
-			cHead.Set(u, h, c.DefaultExpiration)
-			cBody.Set(u, body.String(), c.DefaultExpiration)
+			head.Set(u, h, c.DefaultExpiration)
+			body.Set(u, b.String(), c.DefaultExpiration)
 		}
 	}
 
@@ -96,7 +95,7 @@ func Middleware(fn http.HandlerFunc) http.HandlerFunc {
 
 // RemoveURL removes given path from cache
 func RemoveURL(url string) {
-	cHead.Delete(url)
-	cBody.Delete(url)
+	head.Delete(url)
+	body.Delete(url)
 	log.Printf("[CACHE] Forced cache reloading of %s\n", url)
 }

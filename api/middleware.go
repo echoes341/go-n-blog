@@ -13,12 +13,12 @@ type middleFunc func(http.HandlerFunc) http.HandlerFunc
 
 // useGET: generic middleware handler for GET methods
 func useGET(r Getter, fn middleFunc) *middleWare {
-	return &middleWare{fn, r}
+	return &middleWare{r, fn}
 }
 
 type middleWare struct {
-	fn middleFunc
 	Getter
+	fn middleFunc
 }
 
 func (m *middleWare) GET(path string, fn http.HandlerFunc) {

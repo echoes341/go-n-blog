@@ -2,7 +2,6 @@ package models
 
 import (
 	"context"
-	"errors"
 
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
@@ -41,19 +40,18 @@ func fillUser(uDB userDB) User {
 // otherwise it returns an error and an empty user.
 func UserMatch(un, p string) (User, error) {
 	uDB := userDB{}
-	stdErr := errors.New("Login error")
 	db.Where("email = ?", un).Or("username = ?", un).Find(&uDB)
 	if uDB.ID == 0 {
-		return User{}, stdErr // always return an empty user
+		return User{}, ErrLoginError // always return an empty user
 	}
 
 	// Comparing hash from db with password
 	err := bcrypt.CompareHashAndPassword(uDB.PwdHash, []byte(p))
 	if err != nil {
-		return User{}, stdErr
+		return User{}, ErrLoginError
 	}
 
-	// User has been found and password and ash match
+	// User has been found and password and hash match
 	// So we build an empty User model struct and returns it
 	return fillUser(uDB), nil
 }

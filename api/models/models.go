@@ -4,6 +4,7 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"log"
 
@@ -17,6 +18,8 @@ var db *gorm.DB
 var (
 	// ErrNotFound is the error encountered when record is not found in db
 	ErrNotFound = gorm.ErrRecordNotFound
+	// ErrLoginError is for u/p don't matching
+	ErrLoginError = errors.New("Username and/or password do not match")
 )
 
 // NewDB loads the new mysql database
@@ -24,16 +27,17 @@ var (
 // - p is the password
 // - a is the db address
 // - d is the db name
-func NewDB(u, p, a, d string) error {
-	var err error
+func NewDB(u, p, a, d string) (err error) {
 	par := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local", u, p, a, d)
 	log.Println(par)
 	db, err = gorm.Open("mysql", par)
-	// automigrate dbModels
-	db.AutoMigrate(&articleDB{})
-	db.AutoMigrate(&userDB{})
-	db.AutoMigrate(&commentDB{})
-	db.AutoMigrate(&likeDB{})
+	if err == nil {
+		// automigrate dbModels
+		db.AutoMigrate(&articleDB{})
+		db.AutoMigrate(&userDB{})
+		db.AutoMigrate(&commentDB{})
+		db.AutoMigrate(&likeDB{})
+	}
 	return err
 }
 

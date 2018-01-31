@@ -28,29 +28,27 @@ func IsLiked(IDArt, IDUser int) bool {
 }
 
 // Likes returns all the likes related to an article
-func Likes(IDArt int) ([]Like, error) {
-	var l []Like
+func Likes(IDArt int) (xl []Like, err error) {
 	var lsdb []likeDB
-	err := db.Find(&lsdb, "id_art = ?", IDArt).Error
+	err = db.Find(&lsdb, "id_art = ?", IDArt).Error
 	if err != nil {
-		return l, err
+		return xl, err
 	}
 
 	for _, v := range lsdb {
-		l = append(l, Like{
+		xl = append(xl, Like{
 			ID:     v.ID,
 			IDArt:  v.IDArt,
 			IDUser: v.IDUser,
 			Date:   v.Date,
 		})
 	}
-	return l, nil
+	return xl, nil
 }
 
 // LikesCount counts how many likes has an article
-func LikesCount(IDArt uint) int {
-	i := 0
+func LikesCount(IDArt uint) (count int) {
 	// find and count all the likes of that given article
-	db.Where("id_art = ?", IDArt).Find(&[]likeDB{}).Count(&i)
-	return i
+	db.Where("id_art = ?", IDArt).Find(&[]likeDB{}).Count(&count)
+	return count
 }

@@ -24,14 +24,14 @@ func defineRoutes(router *httptreemux.ContextMux) {
 	lc := controllers.NewLikeController()
 	uc := controllers.NewCommentController()
 	at := controllers.NewAuth()
-	agz := useGET(a, gzipMdl)
+	aGz := useGET(a, gzipMdl)
 	{
 		// get article by id
-		agz.GET("/:id", cache.Middleware(ac.Fetch))
+		aGz.GET("/:id", cache.Middleware(ac.Fetch))
 		// get related likes of an article
-		agz.GET("/:id/likes", cache.Middleware(lc.Likes))
+		aGz.GET("/:id/likes", cache.Middleware(lc.Likes))
 		// get related comments of an article
-		agz.GET("/:id/comments", cache.Middleware(uc.ByArticleID))
+		aGz.GET("/:id/comments", cache.Middleware(uc.ByArticleID))
 	}
 
 	// Reserved section
@@ -45,19 +45,19 @@ func defineRoutes(router *httptreemux.ContextMux) {
 	}
 
 	// Multiple articles group -- gzip middleware
-	xa := useGET(router.NewGroup(articlesGroup), gzipMdl)
+	asGz := useGET(router.NewGroup(articlesGroup), gzipMdl)
 	{
 		// count article
-		xa.GET("/count", cache.Middleware(ac.Count))
+		asGz.GET("/count", cache.Middleware(ac.Count))
 		// get articles by date
-		xa.GET("/list", ac.List)
-		xa.GET("/list/:year", ac.List)
-		xa.GET("/list/:year/:month", ac.List)
-		xa.GET("/list/:year/:month/:day", ac.List)
+		asGz.GET("/list", ac.List)
+		asGz.GET("/list/:year", ac.List)
+		asGz.GET("/list/:year/:month", ac.List)
+		asGz.GET("/list/:year/:month/:day", ac.List)
 	}
 
+	// Debug routes
 	router.GET("/test/cache/date", cache.Middleware(dateTest))
-
 	router.GET("/login", at.AuthRequired(login))
 }
 

@@ -99,21 +99,21 @@ func (ac *ArticleController) List(w http.ResponseWriter, r *http.Request) {
 	// get parameters handling
 	n := 5
 	nPar, err := strconv.Atoi(r.FormValue("n"))
-	if err == nil && n > 0 && n < 10 { //if n is too great or not valid, fall to default
+	if err == nil && nPar > 0 && nPar < 10 { //if n is too great or not valid, fall to default
 		n = nPar
 	}
 
-	likes := r.FormValue("likes") == "true"
-	comments := r.FormValue("comments") == "true"
+	lFlag := r.FormValue("likes") == "true"
+	cFlag := r.FormValue("comments") == "true"
 
 	xa := models.Articles(n, date)
 	for _, ar := range xa {
 		single := map[string]interface{}{}
 		single["article"] = ar
-		if likes { // get likes count
+		if lFlag { // get likes count
 			single["likes"] = models.LikesCount(ar.ID)
 		}
-		if comments {
+		if cFlag {
 			single["comments"] = models.CommentsCount(ar.ID)
 		}
 		answer = append(answer, single)
