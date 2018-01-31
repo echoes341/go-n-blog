@@ -21,10 +21,45 @@ type Like struct {
 	Date   time.Time `json:"date"`
 }
 
+func fetchLike(a, u uint, database *gorm.DB) (lDB likeDB, err error) {
+	err = database.First(&lDB, "id_art = ? AND id_user = ?", a, u).Error
+	return lDB, err
+}
+
 // IsLiked returns true if an article has been liked by a specific user
-func IsLiked(IDArt, IDUser int) bool {
-	err := db.First(&likeDB{}, "id_art = ? AND id_user = ?", IDArt, IDUser)
-	return err == nil
+func IsLiked(aID, uID uint) bool {
+	_, err := fetchLike(aID, uID, db)
+	return err != nil
+}
+
+// LikeToggle set a like by a user or removes it
+func LikeToggle(aID, uID uint) (added bool, err error) {
+	tx := db.Begin()
+	var lDB likeDB
+	// search if liked is present
+	if lDB, err = fetchLike(aID, uID, tx); err == nil {
+		err = tx.Delete(&lDB).Error
+		if err != nil {
+			tx.Rollback()
+			return
+		}
+		return
+	}
+
+	lDB = likeDB{
+		IDArt:  aID,
+		IDUser: uID,
+		Date:   time.Now(),
+	}
+	tx.NewRecord(lDB)
+	err = tx.Create(&lDB).Error
+	if err != nil {
+		tx.Rollback()
+		return
+	}
+	added = true
+	tx.Commit()
+	return
 }
 
 // Likes returns all the likes related to an article
