@@ -34,6 +34,11 @@ func fillComment(cDB commentDB) Comment {
 	}
 }
 
+func commentDBGet(id uint, tx *gorm.DB) (cDB commentDB, err error) {
+	err = tx.First(&cDB, id).Error
+	return
+}
+
 // CommentsCount returns the number of the comments related to an article
 func CommentsCount(IDArt uint) (count int) {
 	// count all the records
@@ -55,11 +60,6 @@ func Comments(IDArt int) (xc []Comment, err error) {
 	}
 	return xc, nil
 }
-	for _, v := range cDB {
-		xc = append(xc, fillComment(v))
-	}
-	return xc, nil
-}
 
 // CommentAdd adds a new comment in the database
 func CommentAdd(aID, uID uint, d time.Time, content string) (c Comment, err error) {
@@ -74,5 +74,26 @@ func CommentAdd(aID, uID uint, d time.Time, content string) (c Comment, err erro
 		return
 	}
 	c = fillComment(cDB)
+	return
+}
+
+// CommentRemove removes a Comment from the database, selected by ID
+func CommentRemove(id uint) (err error) {
+	tx := db.Begin()
+	var c commentDB
+	// look for comment
+	c, err = commentDBGet(id, tx)
+
+	if err != nil {
+		return err
+	}
+
+	err = tx.Delete(&c).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	tx.Commit()
 	return
 }
