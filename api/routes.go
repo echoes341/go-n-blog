@@ -24,8 +24,8 @@ func defineRoutes(router *httptreemux.ContextMux) {
 	uc := controllers.NewCommentController()
 	at := controllers.NewAuth()
 
-	// Single article group -- gzip middleware
 	a := router.NewGroup(articleGroup)
+	// Single article group -- gzip middleware
 	aGz := useGET(a, gzipMdl)
 	{
 		// get article by id
@@ -49,6 +49,8 @@ func defineRoutes(router *httptreemux.ContextMux) {
 		a.PUT("/:id", ac.Edit)
 		// remove article
 		a.DELETE("/:id", ac.Delete)
+		// post a comment
+		a.POST("/:id/comment", uc.Add)
 	}
 
 	// Multiple articles group -- gzip middleware

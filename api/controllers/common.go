@@ -9,7 +9,8 @@ import (
 
 var (
 	// ErrIDNotValid is for not valid article/likes/comments ids ( <= 0 )
-	ErrIDNotValid = errors.New("ID not valid")
+	ErrIDNotValid     = errors.New("ID not valid")
+	ErrParameterEmpty = errors.New("Empty parameter")
 )
 
 type answer struct {
