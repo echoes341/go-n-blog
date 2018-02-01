@@ -55,3 +55,24 @@ func Comments(IDArt int) (xc []Comment, err error) {
 	}
 	return xc, nil
 }
+	for _, v := range cDB {
+		xc = append(xc, fillComment(v))
+	}
+	return xc, nil
+}
+
+// CommentAdd adds a new comment in the database
+func CommentAdd(aID, uID uint, d time.Time, content string) (c Comment, err error) {
+	cDB := commentDB{
+		IDArt:   aID,
+		IDUser:  uID,
+		Date:    d,
+		Content: content,
+	}
+	err = db.Create(&cDB).Error
+	if err != nil {
+		return
+	}
+	c = fillComment(cDB)
+	return
+}
