@@ -97,3 +97,25 @@ func CommentRemove(id uint) (err error) {
 	tx.Commit()
 	return
 }
+
+// CommentUpdate updates a comment and saves it in the database
+func CommentUpdate(id uint, content string) (c Comment, err error) {
+	tx := db.Begin()
+	var cDB commentDB
+	// look for comment
+	cDB, err = commentDBGet(id, tx)
+	if err != nil {
+		return
+	}
+
+	cDB.Content = content
+	err = tx.Save(&cDB).Error
+	if err != nil {
+		tx.Rollback()
+		return
+	}
+
+	tx.Commit()
+	c = fillComment(cDB)
+	return
+}
