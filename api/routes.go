@@ -44,13 +44,13 @@ func defineRoutes(router *httptreemux.ContextMux) {
 	// Reserved section
 	{
 		// add article
-		a.POST("/", ac.Add)
+		a.POST("", at.ExecIfAdmin(ac.Add))
 		// edit article
-		a.PUT("/:id", ac.Edit)
+		a.PUT("/:id", at.ExecIfAdmin(ac.Edit))
 		// remove article
-		a.DELETE("/:id", ac.Delete)
+		a.DELETE("/:id", at.ExecIfAdmin(ac.Delete))
 		// post a comment
-		a.POST("/:id/comment", uc.Add)
+		a.POST("/:id/comment", at.AuthRequired(uc.Add))
 	}
 
 	// Multiple articles group -- gzip middleware

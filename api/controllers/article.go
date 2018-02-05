@@ -163,43 +163,39 @@ func (ac *ArticleController) Edit(w http.ResponseWriter, r *http.Request) {
 // Add is the http handler to add an Article
 func (ac *ArticleController) Add(w http.ResponseWriter, r *http.Request) {
 	u := models.UserContext(r.Context())
+	title := r.FormValue("title")
+	aID, _ := strconv.Atoi(r.FormValue("author"))
 
-	if u.IsAdmin {
-		title := r.FormValue("title")
-		aID, _ := strconv.Atoi(r.FormValue("author"))
+	text := r.FormValue("text")
+	dateInt, _ := strconv.Atoi(r.FormValue("date")) // date in unix format
 
-		text := r.FormValue("text")
-		dateInt, _ := strconv.Atoi(r.FormValue("date")) // date in unix format
-
-		if title == "" || text == "" {
-			sendJSON("Input not valid", http.StatusBadRequest, w)
-			return
-		}
-
-		var author uint
-		if aID <= 0 {
-			author = u.ID
-		} else {
-			author = uint(aID)
-		}
-		var date time.Time
-		if dateInt == 0 { // Error in conversion or parameter empty
-			date = time.Now()
-		} else {
-			date = time.Unix(int64(dateInt), 0)
-		}
-
-		a := models.ArticleAdd(title, text, author, date)
-		if a.ID == 0 { // Something went wrong
-			sendJSON("Error: impossible to add article", http.StatusInternalServerError, w)
-			return
-		}
-
-		w.Header().Set("Content-Location", fmt.Sprintf("%s/%d", ac.ArticleGroup, a.ID))
-		sendJSON(a, http.StatusCreated, w)
-	} else {
-		sendJSON("You are not admin", http.StatusForbidden, w)
+	if title == "" || text == "" {
+		sendJSON("Input not valid", http.StatusBadRequest, w)
+		return
 	}
+
+	var author uint
+	if aID <= 0 {
+		author = u.ID
+	} else {
+		author = uint(aID)
+	}
+	var date time.Time
+	if dateInt == 0 { // Error in conversion or parameter empty
+		date = time.Now()
+	} else {
+		date = time.Unix(int64(dateInt), 0)
+	}
+
+	a := models.ArticleAdd(title, text, author, date)
+	if a.ID == 0 { // Something went wrong
+		sendJSON("Error: impossible to add article", http.StatusInternalServerError, w)
+		return
+	}
+
+	w.Header().Set("Content-Location", fmt.Sprintf("%s/%d", ac.ArticleGroup, a.ID))
+	sendJSON(a, http.StatusCreated, w)
+
 }
 
 // Delete is the http handler to remove an Article
