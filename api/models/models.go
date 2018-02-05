@@ -20,6 +20,8 @@ var (
 	ErrNotFound = gorm.ErrRecordNotFound
 	// ErrLoginError is for u/p don't matching
 	ErrLoginError = errors.New("Username and/or password do not match")
+	// ErrUserPresent is an error for signup: username or email already used
+	ErrUserPresent = errors.New("Username or email already taken")
 )
 
 // NewDB loads the new mysql database

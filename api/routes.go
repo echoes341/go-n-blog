@@ -15,6 +15,7 @@ const (
 	articleGroup  = "/article"
 	articlesGroup = "/articles"
 	likeGroup     = "/like"
+	userGroup     = "/user"
 )
 
 func defineRoutes(router *httptreemux.ContextMux) {
@@ -68,6 +69,12 @@ func defineRoutes(router *httptreemux.ContextMux) {
 	// Debug routes
 	router.GET("/test/cache/date", cache.Middleware(dateTest))
 	router.GET("/login", at.AuthRequired(login))
+	// User management
+	ur := router.NewGroup(userGroup)
+	{
+		// signin
+		ur.POST("", at.SignUp)
+	}
 }
 
 func dateTest(w http.ResponseWriter, r *http.Request) {

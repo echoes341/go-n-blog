@@ -77,3 +77,28 @@ func UserContext(ctx context.Context) *User {
 		IsAdmin:  true,
 	}
 }
+
+// UserAdd is for adding a new user inside the database
+func UserAdd(username, mail, pwd string) (u User, err error) {
+	// check if username is already taken or email is used
+	var n int
+	err = db.Where("email = ?", mail).Or("username = ?", username).Find(&userDB{}).Count(&n).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return
+	}
+	if n != 0 {
+		return u, ErrUserPresent
+	}
+	// calculate hash
+	h, err := bcrypt.GenerateFromPassword([]byte(pwd), bcrypt.DefaultCost)
+	if err != nil {
+		return
+	}
+	uDB := userDB{
+		Email:    mail,
+		Username: username,
+		PwdHash:  h,
+	}
+	db.Create(&uDB)
+	return fillUser(uDB), err
+}

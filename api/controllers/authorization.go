@@ -79,6 +79,7 @@ func checkJWT(j string) (models.User, error) {
 }
 
 // ExecIfAdmin checks if login is valid and if the user is admin and then executes the function associated
+// AuthRequired is implicit
 func (at *Auth) ExecIfAdmin(fn http.HandlerFunc) http.HandlerFunc {
 	return at.AuthRequired(func(w http.ResponseWriter, r *http.Request) {
 		u := models.UserContext(r.Context())
@@ -122,13 +123,6 @@ func (at *Auth) AuthRequired(fn http.HandlerFunc) http.HandlerFunc {
 				unauthorized(ErrLoginBadRequest, w)
 				return
 			}
-			/* SIGNUP
-			hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-			if err != nil {
-				log.Printf("[FATAL] bcrypt login: %s", err)
-				sendJSON(nil, http.StatusInternalServerError, w)
-				return
-			}*/
 
 			u, err := models.UserMatch(n, p)
 			if err != nil {
@@ -165,4 +159,30 @@ func (at *Auth) AuthRequired(fn http.HandlerFunc) http.HandlerFunc {
 		}
 
 	}
+}
+
+// SignUp is the handler to sign a new user in the system
+func (at *Auth) SignUp(w http.ResponseWriter, r *http.Request) {
+	// taking infos from post parameters
+	u := r.FormValue("username")
+	m := r.FormValue("email")
+	p := r.FormValue("password")
+
+	if m == "" || u == "" || p == "" {
+		sendJSON(ErrLoginBadRequest.Error(), http.StatusBadRequest, w)
+		return
+	}
+
+	User, err := models.UserAdd(u, m, p)
+	if err != nil {
+		var status int
+		if err == models.ErrUserPresent {
+			status = http.StatusConflict
+		} else {
+			status = http.StatusInternalServerError
+		}
+		sendJSON(err.Error(), status, w)
+		return
+	}
+	sendJSON(User, http.StatusCreated, w)
 }
