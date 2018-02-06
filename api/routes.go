@@ -22,8 +22,9 @@ func defineRoutes(router *httptreemux.ContextMux) {
 
 	ac := controllers.NewArticleController()
 	lc := controllers.NewLikeController()
-	uc := controllers.NewCommentController()
+	cc := controllers.NewCommentController()
 	at := controllers.NewAuth()
+	uc := controllers.NewUserController()
 
 	a := router.NewGroup(articleGroup)
 	// Single article group -- gzip middleware
@@ -34,7 +35,7 @@ func defineRoutes(router *httptreemux.ContextMux) {
 		// get related likes of an article
 		aGz.GET("/:id/likes", cache.Middleware(lc.Likes))
 		// get related comments of an article
-		aGz.GET("/:id/comments", cache.Middleware(uc.ByArticleID))
+		aGz.GET("/:id/comments", cache.Middleware(cc.ByArticleID))
 	}
 
 	l := router.NewGroup(likeGroup)
@@ -51,7 +52,7 @@ func defineRoutes(router *httptreemux.ContextMux) {
 		// remove article
 		a.DELETE("/:id", at.ExecIfAdmin(ac.Delete))
 		// post a comment
-		a.POST("/:id/comment", at.AuthRequired(uc.Add))
+		a.POST("/:id/comment", at.AuthRequired(cc.Add))
 	}
 
 	// Multiple articles group -- gzip middleware
@@ -73,7 +74,8 @@ func defineRoutes(router *httptreemux.ContextMux) {
 	ur := router.NewGroup(userGroup)
 	{
 		// signin
-		ur.POST("", at.SignUp)
+		ur.POST("", uc.SignUp)
+		ur.DELETE("/:id", at.ExecIfAdmin(uc.Remove))
 	}
 }
 

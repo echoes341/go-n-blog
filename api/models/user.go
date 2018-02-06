@@ -102,3 +102,24 @@ func UserAdd(username, mail, pwd string) (u User, err error) {
 	db.Create(&uDB)
 	return fillUser(uDB), err
 }
+
+// UserRemove removes a user from the database
+func UserRemove(id uint) (err error) {
+	tx := db.Begin()
+	var uDB userDB
+	err = tx.Where("id = ?", id).Find(&uDB).Error
+	if err != nil {
+		return
+	}
+
+	err = tx.Delete(&uDB).Error
+	if err != nil {
+		tx.Rollback()
+		return
+	}
+	// does not remove all associated articles and comments
+	// maybe it should associate all the orphan models
+	// to a dummy user?
+	tx.Commit()
+	return
+}

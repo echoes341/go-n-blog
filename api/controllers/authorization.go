@@ -160,29 +160,3 @@ func (at *Auth) AuthRequired(fn http.HandlerFunc) http.HandlerFunc {
 
 	}
 }
-
-// SignUp is the handler to sign a new user in the system
-func (at *Auth) SignUp(w http.ResponseWriter, r *http.Request) {
-	// taking infos from post parameters
-	u := r.FormValue("username")
-	m := r.FormValue("email")
-	p := r.FormValue("password")
-
-	if m == "" || u == "" || p == "" {
-		sendJSON(ErrLoginBadRequest.Error(), http.StatusBadRequest, w)
-		return
-	}
-
-	User, err := models.UserAdd(u, m, p)
-	if err != nil {
-		var status int
-		if err == models.ErrUserPresent {
-			status = http.StatusConflict
-		} else {
-			status = http.StatusInternalServerError
-		}
-		sendJSON(err.Error(), status, w)
-		return
-	}
-	sendJSON(User, http.StatusCreated, w)
-}
