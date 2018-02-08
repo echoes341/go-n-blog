@@ -1,5 +1,10 @@
 import { Article, ArticleRecap } from './article.model';
+import { Http, Response, Headers } from '@angular/http';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/map';
+import { Injectable } from '@angular/core';
 
+@Injectable()
 export class ArticleService {
   public articles = [
     new Article(
@@ -45,15 +50,45 @@ export class ArticleService {
     )
   ];
 
+  baseUrl = 'http://localhost:8080';
+
+  constructor(private http: Http) {}
+
   /* All these methods should be handled by API */
-  public getArticleByID(id: number): Article {
-    let i = 0;
+  public getArticleByID(id: number): Observable<Article> {
+    /*let i = 0;
     for (i = 0; i < this.articles.length; i++) {
       // tslint:disable-next-line:triple-equals
       if (this.articles[i].id === id) {
         return this.articles[i];
       }
+    }*/
+    const a = this.http
+      .get(`${this.baseUrl}/article/${id}`, { headers: this.getHeaders() })
+      .map(mapArticle);
+    return a;
+
+    function mapArticle(response: Response): Article {
+      return response.json().results.map(this.toArticle);
     }
+  }
+
+  toArticle(r: any): Article {
+    const article = <Article>{
+      id: r.id,
+      title: r.title,
+      author: r.author,
+      text: r.text,
+      date: r.date
+    };
+    console.log('Parsed article: ', article);
+    return article;
+  }
+
+  private getHeaders() {
+    const headers = new Headers();
+    headers.append('Accept', 'application/json');
+    return headers;
   }
 
   public getFirstsXFromDate(x: number, d: Date): Article[] {
