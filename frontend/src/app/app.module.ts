@@ -29,6 +29,7 @@ import { DeleteArticleComponent } from './article/delete-article/delete-article.
 import { AppRoutes } from './app-routes.module';
 import { SignupComponent } from './user/signup/signup.component';
 import { LoginComponent } from './user/login/login.component';
+import { HttpModule } from '@angular/http';
 
 
 @NgModule({
@@ -54,7 +55,8 @@ import { LoginComponent } from './user/login/login.component';
     BrowserModule,
     FormsModule,
     QuillEditorModule,
-    AppRoutes
+    AppRoutes,
+    HttpModule
   ],
   providers: [CommentService, ArticleService, LikeService, CanDeactivateGuard],
   bootstrap: [AppComponent]

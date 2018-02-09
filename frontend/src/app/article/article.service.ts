@@ -55,41 +55,24 @@ export class ArticleService {
   constructor(private http: Http) {}
 
   /* All these methods should be handled by API */
-  public getArticleByID(id: number): Observable<Article> {
-    /*let i = 0;
+  public getArticleByID(id: number): Article {
+    let i = 0;
     for (i = 0; i < this.articles.length; i++) {
       // tslint:disable-next-line:triple-equals
       if (this.articles[i].id === id) {
         return this.articles[i];
       }
-    }*/
-    const a = this.http
-      .get(`${this.baseUrl}/article/${id}`, { headers: this.getHeaders() })
-      .map(mapArticle);
-    return a;
-
-    function mapArticle(response: Response): Article {
-      return response.json().results.map(this.toArticle);
     }
   }
 
-  toArticle(r: any): Article {
-    const article = <Article>{
-      id: r.id,
-      title: r.title,
-      author: r.author,
-      text: r.text,
-      date: r.date
-    };
-    console.log('Parsed article: ', article);
-    return article;
+  public getArticleHTTP(id: number) {
+    return this.http.get(`${this.baseUrl}/article/${id}`)
+      .map((response: Response) => {
+        const data = response.json();
+        return data;
+      });
   }
 
-  private getHeaders() {
-    const headers = new Headers();
-    headers.append('Accept', 'application/json');
-    return headers;
-  }
 
   public getFirstsXFromDate(x: number, d: Date): Article[] {
     let result: Article[];
