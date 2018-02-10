@@ -28,7 +28,10 @@ func defineRoutes(router *httptreemux.ContextMux) {
 
 	a := router.NewGroup(articleGroup)
 	// Single article group -- gzip middleware
-	aGz := useGET(a, gzipMdl)
+	aGz := useMdl(
+		useMdl(a, CORSAll),
+		gzipMdl,
+	)
 	{
 		// get article by id
 		aGz.GET("/:id", cache.Middleware(ac.Fetch))
@@ -56,7 +59,7 @@ func defineRoutes(router *httptreemux.ContextMux) {
 	}
 
 	// Multiple articles group -- gzip middleware
-	asGz := useGET(router.NewGroup(articlesGroup), gzipMdl)
+	asGz := useMdl(router.NewGroup(articlesGroup), gzipMdl)
 	{
 		// count article
 		asGz.GET("/count", cache.Middleware(ac.Count))
