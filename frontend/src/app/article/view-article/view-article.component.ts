@@ -26,17 +26,24 @@ export class ViewArticleComponent implements OnInit {
 
   ngOnInit() {
     const id = +this.route.snapshot.params['id']; // get article ID
-    this.article = this.aServ.getArticleByID(id); // get article
-    this.aServ.getArticleHTTP(id).subscribe(
-      (data: any) => { console.log(data); }
+
+    this.aServ.getArticle(id).subscribe(
+      (data: any) => {
+        this.article = data.data;
+        /* date formatting */
+        const d = this.article.date;
+        this.dateFormat = d.getHours() + ':' + d.getMinutes() + ' ';
+        const day = d.getDate() < 10 ? '0' + d.getDate() : d.getDate();
+        const month: string = d.getMonth() + 1 < 10 ? '0' + (d.getMonth() + 1) : (d.getMonth() + 1) + '';
+        this.dateFormat += day + '-' + month + '-' + d.getFullYear();
+      },
+      (error: Response) => {
+        if (error.status === 404) {
+          console.log('Article not found');
+        }
+      }
     );
 
-    /* date formatting */
-    const d = this.article.date;
-    this.dateFormat = d.getHours() + ':' + d.getMinutes() + ' ';
-    const day = d.getDate() < 10 ? '0' + d.getDate() : d.getDate();
-    const month: string = d.getMonth() + 1 < 10 ? '0' + (d.getMonth() + 1) : (d.getMonth() + 1) + '';
-    this.dateFormat += day + '-' + month + '-' + d.getFullYear();
 
     this.likeNum = this.getLikeNum();
     this.isLiked = this.likeServ.isLiked(id /*, userid*/);

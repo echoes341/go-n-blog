@@ -2,6 +2,7 @@ import { Article, ArticleRecap } from './article.model';
 import { Http, Response, Headers } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/catch';
 import { Injectable } from '@angular/core';
 
 @Injectable()
@@ -65,14 +66,17 @@ export class ArticleService {
     }
   }
 
-  public getArticleHTTP(id: number) {
-    return this.http.get(`${this.baseUrl}/article/${id}`)
+  public getArticle(id: number) {
+    return this.http
+      .get(`${this.baseUrl}/article/${id}`)
       .map((response: Response) => {
         const data = response.json();
         return data;
+      })
+      .catch((error: Response) => {
+        return Observable.throw(error);
       });
   }
-
 
   public getFirstsXFromDate(x: number, d: Date): Article[] {
     let result: Article[];
@@ -81,6 +85,17 @@ export class ArticleService {
     });
     this.sortArticles(result);
     return result.slice(0, x);
+  }
+
+  getFirsts(x: number, d: Date) {
+    return this.http.get(`${this.baseUrl}/articles/list/${d.getFullYear()}/${d.getMonth()}/${d.getDate()}?n=${x}`
+      )
+      .map((resp: Response) => {
+        return resp.json();
+      })
+      .catch(
+        (error: Response) => return Observable.throw(error);
+      );
   }
 
   public getArticlesRecap(): ArticleRecap[] {
