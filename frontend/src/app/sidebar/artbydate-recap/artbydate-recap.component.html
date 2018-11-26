@@ -1,9 +1,0 @@
-<h4>Archive</h4>
-<ul class="year">
-  <li *ngFor="let year of objectKeys(list)" >
-    <div class="year-num">{{year}}</div>
-    <ul class="month">
-      <li *ngFor="let month of objectKeys(list[year])" > {{getMonthName(month)}} ({{list[year][month]}})</li>
-    </ul>
-  </li>
-</ul>

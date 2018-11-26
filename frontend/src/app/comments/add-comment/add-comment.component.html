@@ -1,8 +1,0 @@
-<div class="add-comment">
-  <form  #f="ngForm" (ngSubmit)="onAddComment(f)" >
-  <input type="text" name="name" id="name" placeholder="You name" required ngModel>
-  <input type="email" name="email" id="email" placeholder="Your Email" required ngModel>
-  <textarea placeholder="Write something..." required ngModel name="text"></textarea>
-  <button type="submit" [disabled]="!f.valid">Send</button>
-</form>
-</div>

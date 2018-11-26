@@ -1,6 +1,0 @@
-footer {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(10em, 1fr));
-  padding-left: 1em;
-  padding-right: 1em;
-}
